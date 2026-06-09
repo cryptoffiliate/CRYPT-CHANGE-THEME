@@ -1,0 +1,115 @@
+{
+  "theme_and_archetype": {
+    "theme": "Light",
+    "archetype": "Archetype 4 (Swiss & High-Contrast)",
+    "description": "Editorial Neo-Brutalism. A high-end financial magazine meets a stark data terminal. Distances the platform from the generic 'crypto dark mode' aesthetic. Uses rigid grids, monospace data, and stark borders."
+  },
+  "color_system": {
+    "background": {
+      "primary": "#F4F4F0",
+      "secondary": "#EAEAEA",
+      "surface": "#FFFFFF",
+      "inverse": "#111111"
+    },
+    "text": {
+      "primary": "#111111",
+      "secondary": "#4A4A4A",
+      "inverse": "#F4F4F0",
+      "accent": "#002FA7"
+    },
+    "accents": {
+      "primary": "#FF5722",
+      "secondary": "#002FA7",
+      "tertiary": "#FFD600"
+    },
+    "semantic": {
+      "success_bg": "#00C853",
+      "success_text": "#111111",
+      "danger_bg": "#D50000",
+      "danger_text": "#FFFFFF",
+      "border": "#111111"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Cabinet Grotesk",
+      "body": "IBM Plex Sans",
+      "data_and_code": "IBM Plex Mono"
+    },
+    "scale": {
+      "h1": "text-5xl md:text-6xl font-black tracking-tighter leading-none",
+      "h2": "text-3xl md:text-4xl font-bold tracking-tight leading-tight",
+      "h3": "text-xl md:text-2xl font-bold tracking-tight",
+      "body": "text-base font-normal leading-relaxed",
+      "data_large": "text-2xl md:text-3xl font-mono font-bold tracking-tight",
+      "data_small": "text-sm font-mono font-medium tracking-tight",
+      "overline": "text-xs font-mono font-bold uppercase tracking-[0.2em]"
+    }
+  },
+  "spacing_and_layout": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "spacing_scale": "Use generous padding: p-6, p-8, p-12. Elements inside bordered containers MUST have internal padding.",
+    "border_radius": "rounded-none (0px) or maximally rounded-sm (2px) to maintain the brutalist editorial edge.",
+    "shadows": {
+      "brutalist_sm": "4px 4px 0px 0px #111111",
+      "brutalist_md": "8px 8px 0px 0px #111111",
+      "brutalist_hover": "2px 2px 0px 0px #111111"
+    },
+    "borders": "border-2 border-[#111111] or border-4 border-[#111111] for massive structural elements."
+  },
+  "component_styles": {
+    "ticker": "Sticky at the top. bg-[#111111] text-[#F4F4F0] font-mono text-sm border-b-4 border-[#111111]. Uses pure #00C853 for positive and #D50000 for negative changes. No gradients.",
+    "navbar": "Off-white bg-[#F4F4F0], border-b-2 border-[#111111]. Links are stark font-bold. Dropdown menus are pure white surfaces with border-2 border-[#111111] and brutalist_sm shadow. Hovering links inverts colors (bg-[#111111] text-[#F4F4F0]).",
+    "hero_section": "Asymmetrical grid layout. Left side: Massive typography, minimal spacing between H1 and H2. Right side: The AI Chat Interface designed as a rigid data terminal.",
+    "ai_chat": "Not floating bubbles. A rigid, bordered component (border-2 border-[#111111] shadow-brutalist_md bg-white). Header is solid jet black with monospace text. User messages are gray blocks, AI responses are plain text with monospace data annotations.",
+    "comparison_table": "Thick outer border (border-4). Header row is bg-[#111111] text-white font-mono. Rows alternate pure white and #F4F4F0. High contrast text. Interactive row hover: bg-[#EAEAEA].",
+    "buttons": {
+      "primary": "bg-[#FF5722] text-[#111111] font-bold border-2 border-[#111111] shadow-brutalist_sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-brutalist_hover transition-all",
+      "secondary": "bg-[#FFFFFF] text-[#111111] font-bold border-2 border-[#111111] shadow-brutalist_sm hover:bg-[#F4F4F0]"
+    },
+    "cards_grid": "Bento box style, but strict neo-brutalist. Uniform borders, distinct blocks of solid colors (white, warning yellow, mint green). High emphasis on border-r and border-b for separation."
+  },
+  "motion_and_interactions": {
+    "transitions": "Fast, crisp. duration-150 ease-out. No slow fading. Translate interactions (moving down right) on click to simulate physical button press of the brutalist shadows.",
+    "hover_states": "Hard background inversions or structural shifts. No soft glow or glassmorphism blur."
+  },
+  "accessibility_and_testing": {
+    "contrast": "Extremely high contrast. Meets WCAG AAA for text. Ensure black borders distinctly separate adjacent colored regions.",
+    "testing": "All interactive elements (buttons, links, table rows, nav items) MUST use kebab-case data-testid attributes indicating their role (e.g., data-testid='hero-cta-button', data-testid='nav-exchange-link')."
+  },
+  "media_and_assets": {
+    "icons_library": "phosphor-icons (Duotone or Bold) for standard UI, lucide-react as fallback.",
+    "image_urls": {
+      "hero_abstract_bg": {
+        "url": "https://images.unsplash.com/photo-1750969185331-e03829f72c7d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwyfHxtaW5pbWFsJTIwYWJzdHJhY3QlMjBkYXRhJTIwdmlzdWFsaXphdGlvbnxlbnwwfHx8fDE3ODA5OTcyNTN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Abstract blue lines and dots on black background (to be used sparingly or inverted for contrast)",
+        "category": "hero_background"
+      },
+      "newspaper_texture": {
+        "url": "https://images.unsplash.com/photo-1629968417850-3505f5180761?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHxuZXdzcGFwZXIlMjB0ZXh0dXJlJTIwd2hpdGV8ZW58MHx8fHwxNzgwOTk3MjczfDA&ixlib=rb-4.1.0&q=85",
+        "description": "White subtle texture for section backgrounds",
+        "category": "texture_overlay"
+      },
+      "wallet_placeholder": {
+        "url": "https://images.unsplash.com/photo-1651054558996-03455fe2702f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2ODl8MHwxfHNlYXJjaHwxfHxoYXJkd2FyZSUyMGNyeXB0byUyMHdhbGxldHxlbnwwfHx8fDE3ODA5OTcyNTN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Hardware crypto wallet image",
+        "category": "product_image"
+      },
+      "data_ticker": {
+        "url": "https://images.unsplash.com/photo-1651341050677-24dba59ce0fd?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwxfHxzdG9jayUyMG1hcmtldCUyMHRpY2tlcnxlbnwwfHx8fDE3ODA5OTcyNzN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Stock market ticker UI abstract",
+        "category": "data_visualization"
+      }
+    }
+  },
+  "instructions_to_main_agent": [
+    "Wipe out the old dark/gold CSS tokens in globals.css and replace them with the new high-contrast editorial brutalist palette.",
+    "Update layout structures to implement solid 2px-4px borders and solid drop shadows instead of soft shadows and border-radius.",
+    "Use IBM Plex Mono for all numeric data (tickers, tables). Use Cabinet Grotesk for Headings.",
+    "Redesign the AIChat widget from a floating bubble to an embedded, rigid, terminal-style panel.",
+    "The ticker MUST be high contrast (black background, monospace fonts, pure green/red blocks).",
+    "Replace generic button classes with brutalist hover translations (translate-x/y and shadow manipulation).",
+    "All functional elements must have 'data-testid'.",
+    "Share the guideline modifications specifically considering .js or .jsx file extensions for the implementation phase."
+  ]
+}

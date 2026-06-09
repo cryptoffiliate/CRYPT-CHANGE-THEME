@@ -1,70 +1,137 @@
-# Getting Started with Create React App
+# cryptoffiliate.com
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Crypto exchange review and comparison site built with Next.js 14, TypeScript, Tailwind CSS, and Supabase.
 
-## Available Scripts
+## Quick start
 
-In the project directory, you can run:
+```bash
+# 1. Install dependencies
+npm install
 
-### `npm start`
+# 2. Copy the env template and fill in your Supabase keys
+cp .env.local.example .env.local
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# 3. Run the dev server
+npm run dev
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Open [http://localhost:3000](http://localhost:3000).
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Project structure
 
-### `npm run build`
+```
+src/
+├── app/                         # Next.js App Router pages
+│   ├── page.tsx                 # Homepage
+│   ├── compare/page.tsx         # Exchange comparison table
+│   ├── reviews/
+│   │   ├── page.tsx             # Reviews index
+│   │   └── [slug]/page.tsx      # Individual exchange review
+│   ├── bonuses/page.tsx         # Promo codes & signup bonuses
+│   └── tools/
+│       └── fee-calculator/      # Interactive fee calculator
+│           └── page.tsx
+├── components/
+│   ├── Nav.tsx                  # Sticky navigation
+│   ├── Footer.tsx               # Footer with affiliate disclosure
+│   ├── ExchangeComparisonTable.tsx  # ★ Main comparison table
+│   ├── ExchangeCard.tsx         # Homepage top-pick cards
+│   └── FeeCalculator.tsx        # Fee comparison tool
+├── data/
+│   └── exchanges.ts             # ★ Central exchange data — edit this
+├── lib/
+│   ├── types.ts                 # TypeScript interfaces
+│   ├── supabase.ts              # Supabase client
+│   └── utils.ts                 # Helpers (cn, buildAffiliateUrl, etc.)
+└── app/globals.css              # Tailwind + base styles
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Adding a new exchange
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Edit `src/data/exchanges.ts` and add a new object to the `EXCHANGES` array:
 
-### `npm run eject`
+```ts
+{
+  id: "newexchange",
+  slug: "newexchange",
+  name: "New Exchange",
+  logo: "NE",
+  logoColor: "#FF5500",
+  tagline: "Your tagline here",
+  rating: 4.2,
+  reviews: 3000,
+  makerFee: 0.1,
+  takerFee: 0.15,
+  withdrawalFee: "Low",
+  minDeposit: "$0",
+  coins: 150,
+  kyc: "required",
+  fiatOnRamp: true,
+  futures: false,
+  staking: false,
+  usBased: true,
+  best: ["Great UI", "Low fees"],
+  affiliateUrl: "https://newexchange.com/ref=CRYPTOFFILIATE",
+  bonus: "$20 welcome bonus",
+  commission: "$15 per signup",
+  badge: null,
+  badgeColor: null,
+  founded: 2020,
+  headquarters: "USA",
+  lastUpdated: "2025-06-01",
+}
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The exchange will automatically appear on the comparison table, fee calculator, bonuses page, and get its own review page at `/reviews/newexchange`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Updating affiliate links
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+All affiliate URLs are in `src/data/exchanges.ts` under the `affiliateUrl` field. UTM parameters are added automatically by `buildAffiliateUrl()` in `src/lib/utils.ts`.
 
-## Learn More
+Replace `CRYPTOFFILIATE` in each URL with your actual referral code from each program.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Setting up Supabase (optional — for live fee data)
 
-### Code Splitting
+1. Create a project at [supabase.com](https://supabase.com)
+2. Run `supabase-schema.sql` in the SQL editor
+3. Copy your project URL and anon key into `.env.local`
+4. Build a cron job (Vercel Cron or a GitHub Action) to sync fee data from exchange APIs nightly
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+# Deploy to Vercel (recommended)
+npx vercel
 
-### Making a Progressive Web App
+# Or build for production
+npm run build
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Point your `cryptoffiliate.com` domain to Vercel in your domain registrar.
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## SEO notes
 
-### Deployment
+- Every review page generates JSON-LD Review schema automatically → star ratings in Google SERPs
+- All pages use Next.js `generateMetadata` for dynamic `<title>` and `<meta description>`
+- Exchange review pages use `generateStaticParams` for full SSG at build time
+- Affiliate links use `rel="noopener noreferrer sponsored"` per Google's guidelines
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## Affiliate disclosure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This site earns commissions when visitors sign up through affiliate links.
+Disclosures appear on every page containing affiliate links, per FTC requirements.

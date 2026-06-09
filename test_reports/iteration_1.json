@@ -1,0 +1,31 @@
+{
+  "summary": "Backend-only testing of Cryptoffiliate FastAPI. Created pytest suite covering all 9 review scenarios. All 9 tests PASS in 12.5s. Live ticker is serving from Kraken (source=kraken) with proper 60s caching. AI Advisor SSE stream emits BOTH new {type:delta} and legacy {type:content_block_delta} events and terminates with [DONE]. Non-streaming /analyze returns a non-empty scam-detector response. Validation errors (empty messages, assistant-last, empty prompt) all return 400. Mongo status round-trip persists and reads back via UUID id without ObjectId leakage.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/ticker", "issue": "DOGE/USD silently dropped — Kraken returns the pair under key 'XDGUSD' (not 'XDOGEUSD'), so substring lookup find_row('DOGEUSD') -> looks for 'DOGE' in keys and fails. Result: 7 of 8 configured coins ship. Either map DOGEUSD->XDGUSD explicitly or also probe by altname via /0/public/AssetPairs."}
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_cryptoffiliate_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(Optional) Fix DOGE/USD ticker mapping so all 8 configured coins surface. Kraken altname for Dogecoin is 'XDGUSD' or use /0/public/AssetPairs to resolve aliases."
+  ],
+  "critical_code_review_comments": [
+    "server.py is 360 lines — fine for now, but ticker + AI advisor will outgrow this; consider splitting into routes/ai.py and routes/ticker.py once features expand.",
+    "AI_SYSTEM_PROMPT hard-codes 2026 fee data inline. Move to a JSON/YAML config so non-engineers can update fees without touching code.",
+    "_ticker_cache is a module-level dict — not concurrency-safe under multiple workers (each worker has its own cache, OK functionally but expect ~N upstream calls per minute with N workers).",
+    "AnalyzeRequest path catches generic Exception and re-raises as 502; consider catching HTTPException separately to avoid double-wrapping.",
+    "ai_advisor builds 'thread_context' inside system prompt rather than using LlmChat session reuse; works but loses true multi-turn memory across calls (every request is a fresh chat with session_id). Confirm intended."
+  ],
+  "updated_files": ["/app/backend/tests/test_cryptoffiliate_api.py"],
+  "success_rate": {"backend": "100%", "frontend": "N/A (backend-only request)"},
+  "test_credentials": "N/A — no auth on these endpoints. EMERGENT_LLM_KEY present in /app/backend/.env.",
+  "seed_data_creation": "Tests create one TEST_<uuid8> StatusCheck row per run (no cleanup endpoint; safe to leave).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Pytest suite lives at /app/backend/tests/test_cryptoffiliate_api.py. Use BASE_URL from REACT_APP_BACKEND_URL. SSE test reads with requests stream=True and parses 'data:' lines; expect both delta formats + [DONE]. Ticker cache test relies on TTL=60s — second call within 1.5s should return identical updated_at."
+}

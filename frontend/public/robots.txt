@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block API and admin routes from crawlers
+Disallow: /api/
+Disallow: /api/admin/
+
+Sitemap: https://cryptoffiliate.com/sitemap.xml
