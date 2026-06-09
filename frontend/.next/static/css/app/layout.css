@@ -2786,6 +2786,290 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--wire) !important;
   border-width: 1px !important;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BRUTALIST PAGE SCOPE — re-flips the legacy dark-theme adaptations back
+   to the editorial-brutalist light palette for pages that opt-in via
+   <div className="brutalist-page">…</div>. This lets us cascade the
+   brutalist look to specific inner pages without breaking the dark
+   cyberpunk homepage / hero sections.
+   ═══════════════════════════════════════════════════════════════════════ */
+.brutalist-page {
+  --bp-paper:    #F4F4F0;
+  --bp-surface:  #FFFFFF;
+  --bp-ink:      #111111;
+  --bp-ink-2:    #2A2A2A;
+  --bp-muted:    #4A4A4A;
+  --bp-line:     #111111;
+  --bp-vermilion:#FF5722;
+  --bp-klein:    #002FA7;
+  --bp-canary:   #FFD600;
+  --bp-mint:     #00C853;
+  --bp-danger:   #D50000;
+
+  background-color: var(--bp-paper) !important;
+  color: var(--bp-ink) !important;
+  font-family: var(--font-body), 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+/* Base text */
+.brutalist-page,
+.brutalist-page p,
+.brutalist-page span,
+.brutalist-page li,
+.brutalist-page td,
+.brutalist-page th,
+.brutalist-page h1,
+.brutalist-page h2,
+.brutalist-page h3,
+.brutalist-page h4,
+.brutalist-page h5,
+.brutalist-page h6,
+.brutalist-page label,
+.brutalist-page section,
+.brutalist-page article,
+.brutalist-page aside,
+.brutalist-page header,
+.brutalist-page footer { color: var(--bp-ink); }
+
+.brutalist-page .text-slate-900,
+.brutalist-page .text-slate-800,
+.brutalist-page .text-slate-700 { color: var(--bp-ink) !important; text-shadow: none !important; }
+.brutalist-page .text-slate-600,
+.brutalist-page .text-slate-500 { color: var(--bp-muted) !important; }
+.brutalist-page .text-slate-400 { color: #6B6B6B !important; }
+.brutalist-page .text-slate-300,
+.brutalist-page .text-slate-200,
+.brutalist-page .text-slate-100,
+.brutalist-page .text-slate-50  { color: var(--bp-muted) !important; }
+.brutalist-page .text-white     { color: var(--bp-paper) !important; }
+.brutalist-page .text-black     { color: var(--bp-ink) !important; }
+
+.brutalist-page .text-brand-500,
+.brutalist-page .text-brand-600,
+.brutalist-page .text-brand-700 { color: var(--bp-vermilion) !important; text-shadow: none !important; }
+.brutalist-page .text-brand-400,
+.brutalist-page .text-brand-300,
+.brutalist-page .text-brand-200,
+.brutalist-page .text-brand-100 { color: var(--bp-vermilion) !important; text-shadow: none !important; }
+
+.brutalist-page .text-emerald-500,
+.brutalist-page .text-emerald-600,
+.brutalist-page .text-emerald-700 { color: var(--bp-mint) !important; text-shadow: none !important; }
+.brutalist-page .text-emerald-400,
+.brutalist-page .text-emerald-300 { color: var(--bp-mint) !important; text-shadow: none !important; }
+
+.brutalist-page .text-red-400,
+.brutalist-page .text-red-500,
+.brutalist-page .text-red-600   { color: var(--bp-danger) !important; }
+.brutalist-page .text-amber-700,
+.brutalist-page .text-amber-800,
+.brutalist-page .text-amber-500,
+.brutalist-page .text-amber-600 { color: var(--bp-ink) !important; }
+
+/* Backgrounds */
+.brutalist-page .bg-white,
+.brutalist-page .bg-slate-50,
+.brutalist-page .bg-slate-100,
+.brutalist-page .bg-slate-200 { background-color: var(--bp-surface) !important; }
+.brutalist-page .bg-slate-300,
+.brutalist-page .bg-slate-400 { background-color: var(--bp-paper) !important; }
+.brutalist-page .bg-slate-500,
+.brutalist-page .bg-slate-600,
+.brutalist-page .bg-slate-700,
+.brutalist-page .bg-slate-800,
+.brutalist-page .bg-slate-900,
+.brutalist-page .bg-black     { background-color: var(--bp-ink) !important; color: var(--bp-paper) !important; }
+
+.brutalist-page .bg-brand-50,
+.brutalist-page .bg-brand-100,
+.brutalist-page .bg-brand-200 { background-color: rgba(255, 87, 34, 0.10) !important; }
+.brutalist-page .bg-brand-500,
+.brutalist-page .bg-brand-600 { background-color: var(--bp-vermilion) !important; color: var(--bp-ink) !important; }
+
+.brutalist-page .bg-emerald-50  { background-color: rgba(0, 200, 83, 0.12) !important; }
+.brutalist-page .bg-emerald-100 { background-color: rgba(0, 200, 83, 0.20) !important; }
+.brutalist-page .bg-emerald-500 { background-color: var(--bp-mint) !important; color: var(--bp-ink) !important; }
+.brutalist-page .bg-amber-50    { background-color: rgba(255, 214, 0, 0.14) !important; }
+.brutalist-page .bg-amber-100   { background-color: rgba(255, 214, 0, 0.22) !important; }
+
+/* Borders */
+.brutalist-page .border-slate-100,
+.brutalist-page .border-slate-200,
+.brutalist-page .border-slate-300,
+.brutalist-page .border-slate-400,
+.brutalist-page .border-slate-500,
+.brutalist-page .border-slate-600,
+.brutalist-page .border-slate-700 { border-color: var(--bp-line) !important; }
+
+.brutalist-page .border-brand-100,
+.brutalist-page .border-brand-200,
+.brutalist-page .border-brand-400,
+.brutalist-page .border-brand-500 { border-color: var(--bp-vermilion) !important; }
+.brutalist-page .border-emerald-100,
+.brutalist-page .border-emerald-200,
+.brutalist-page .border-emerald-500 { border-color: var(--bp-mint) !important; }
+.brutalist-page .border-amber-200,
+.brutalist-page .border-amber-500   { border-color: var(--bp-canary) !important; }
+
+/* .card → brutalist card */
+.brutalist-page .card,
+.brutalist-page a.card {
+  background: var(--bp-surface) !important;
+  border: 2px solid var(--bp-line) !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 0 var(--bp-ink) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--bp-ink) !important;
+  transition: transform .15s ease-out, box-shadow .15s ease-out !important;
+}
+.brutalist-page a.card:hover,
+.brutalist-page .card.hover\:shadow-md:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 6px 6px 0 0 var(--bp-ink) !important;
+  border-color: var(--bp-line) !important;
+}
+
+/* Section labels (eyebrow) */
+.brutalist-page .section-label,
+.brutalist-page .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--bp-vermilion) !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+.brutalist-page .section-label::before { content: "● "; }
+
+/* Outline button */
+.brutalist-page .btn-outline {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--bp-ink) !important;
+  padding: 8px 14px !important;
+  border-radius: 0 !important;
+  border: 2px solid var(--bp-line) !important;
+  background: var(--bp-surface) !important;
+  box-shadow: 3px 3px 0 0 var(--bp-ink) !important;
+  backdrop-filter: none !important;
+  transition: transform .12s ease-out, box-shadow .12s ease-out !important;
+}
+.brutalist-page .btn-outline:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 0 var(--bp-ink) !important;
+  background: var(--bp-canary) !important;
+  color: var(--bp-ink) !important;
+}
+
+/* Inputs */
+.brutalist-page input,
+.brutalist-page textarea,
+.brutalist-page select {
+  background: var(--bp-surface) !important;
+  border: 2px solid var(--bp-line) !important;
+  border-radius: 0 !important;
+  color: var(--bp-ink) !important;
+  font-family: var(--font-mono);
+}
+.brutalist-page input:focus,
+.brutalist-page textarea:focus,
+.brutalist-page select:focus {
+  outline: none !important;
+  border-color: var(--bp-vermilion) !important;
+  box-shadow: 3px 3px 0 0 var(--bp-ink) !important;
+}
+
+/* Reset rounded utilities to 0 inside brutalist pages */
+.brutalist-page .rounded,
+.brutalist-page .rounded-sm,
+.brutalist-page .rounded-md,
+.brutalist-page .rounded-lg,
+.brutalist-page .rounded-xl,
+.brutalist-page .rounded-2xl,
+.brutalist-page .rounded-3xl { border-radius: 0 !important; }
+.brutalist-page .rounded-full { border-radius: 9999px !important; }
+.brutalist-page .keep-round,
+.brutalist-page .keep-round * { border-radius: 9999px !important; }
+
+/* Re-enable the inline-hex inversion ONLY outside brutalist pages */
+.brutalist-page [style*='background:#FFFFFF'],
+.brutalist-page [style*='background: #FFFFFF'],
+.brutalist-page [style*='background-color:#FFFFFF'],
+.brutalist-page [style*='background-color: #FFFFFF'],
+.brutalist-page [style*='background:#FFF '],
+.brutalist-page [style*='background: #FFF '] {
+  background: #FFFFFF !important;
+}
+.brutalist-page [style*='background:#F4F4F0'],
+.brutalist-page [style*='background: #F4F4F0'] {
+  background: #F4F4F0 !important;
+}
+.brutalist-page [style*='color:#111111'],
+.brutalist-page [style*='color: #111111'],
+.brutalist-page [style*='color:#111'],
+.brutalist-page [style*='color: #111'] {
+  color: #111111 !important;
+}
+.brutalist-page [style*='color:#4A4A4A'],
+.brutalist-page [style*='color: #4A4A4A'] {
+  color: #4A4A4A !important;
+}
+.brutalist-page [style*='border:2px solid #111111'],
+.brutalist-page [style*='border: 2px solid #111111'],
+.brutalist-page [style*='border:2.5px solid #111111'],
+.brutalist-page [style*='border: 2.5px solid #111111'],
+.brutalist-page [style*='border:3px solid #111111'],
+.brutalist-page [style*='border: 3px solid #111111'] {
+  border-color: #111111 !important;
+  border-width: 2px !important;
+}
+
+/* Diagonal stripe utility */
+.brutalist-page .stripe-yellow {
+  background: repeating-linear-gradient(-45deg, #FFD600 0 12px, #111111 12px 24px);
+  border-bottom: 2px solid #111111;
+  height: 14px;
+}
+.brutalist-page .stripe-divider {
+  background: repeating-linear-gradient(-45deg, #111111 0 8px, transparent 8px 16px);
+  height: 8px;
+  border-top: 2px solid #111111;
+  border-bottom: 2px solid #111111;
+}
+
+/* Brutalist primary CTA */
+.brutalist-page .btn-brutalist-primary {
+  display: inline-block;
+  background: var(--bp-vermilion);
+  color: var(--bp-ink);
+  border: 2px solid var(--bp-line);
+  box-shadow: 4px 4px 0 0 var(--bp-ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .12s ease-out, box-shadow .12s ease-out;
+}
+.brutalist-page .btn-brutalist-primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--bp-ink);
+}
 .file\:border-0::file-selector-button{
   border-width: 0px;
 }

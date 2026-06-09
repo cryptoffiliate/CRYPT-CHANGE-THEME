@@ -1,0 +1,32 @@
+{
+  "summary": "Backend regression after Iteration-5 APScheduler integration. Re-ran the existing 16-test pytest suite at /app/backend/tests/test_cryptoffiliate_api.py — all 16/16 PASS in 25.55s (root, ticker shape, ticker 60s cache, ai-advisor SSE empty/assistant-last 400s, ai-advisor SSE dual delta-format stream, analyze empty 400, analyze scam-detector 200, status round-trip, subscribe invalid email 400, subscribe valid 200 with resend/supabase blocks, subscribe same-IP rate-limit 429, fees shape with 5 exchanges, cron no-auth 401, cron wrong-bearer 401, cron correct-bearer 200). Verified APScheduler boot: backend.err.log contains '[scheduler] started — sync-fees scheduled nightly at 02:00 UTC'; no exceptions/tracebacks during startup; backend supervisor RUNNING. Verified single-instance-per-process guard: each Python process (PIDs 1696, 1703 across two reload cycles) logged the 'started' line exactly once — the `if _scheduler.running: return` guard works as designed within a process. The scheduler.start() call succeeded (it would not log otherwise) implying scheduler.running == True post-startup. Job did NOT fire during the test window (cron @ 02:00 UTC; current UTC time ~20:39) so no side-effects observed, as expected.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "scheduler", "issue": "Under `uvicorn --reload` (dev mode only), each reloaded worker process spawns its own AsyncIOScheduler. Two distinct PIDs (1696, 1703) each logged '[scheduler] started' — that's one scheduler per process, not duplicates within the same process. The in-process guard cannot dedupe across separate Python processes; this is a property of --reload, not a bug. In production (single worker, no reload) only one scheduler will exist. No action needed unless --reload remains in production." },
+      {"endpoint": "/api/subscribe", "issue": "(carried) Unbounded module-level _subscribe_rate dict — Iteration 5 added a GC pass when len>1000 (line 455-458). Good mitigation; the bound is now effectively capped. Resolved."},
+      {"endpoint": "/api/ticker", "issue": "(carried) DOGE/USD pair lookup still relies on substring match; Kraken returns 'XDGUSD' but stem becomes 'DOGE' which won't match. Pre-existing, not regressed."}
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_cryptoffiliate_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py is now ~778 lines — past the 700-line guideline. Recommend splitting into routes/ (ai.py, ticker.py, subscribe.py, fees.py, cron.py) and a scheduler.py module before more features are added.",
+    "@app.on_event('startup'/'shutdown') is deprecated in FastAPI; migrate to the lifespan context manager (yield-based) to avoid future breakage and ensure clean scheduler shutdown ordering.",
+    "_scheduler is module-level and started inside the startup hook. Under uvicorn --reload (dev), the parent process never starts it but each worker does, so behavior is fine. In production with multiple workers (gunicorn -w N), there will be N schedulers — each will fire the job, leading to N redundant Supabase writes. Recommend (a) running with --workers 1 for the API or (b) gating scheduler start behind an env flag (ENABLE_SCHEDULER) so only one replica runs it.",
+    "_scheduled_sync_fees duplicates ~30 lines of the POST /api/cron/sync-fees handler. Extract a shared `async def _run_sync_fees(): -> dict` and call it from both the route (after auth check) and the scheduled job.",
+    "No persistence/jobstore configured for APScheduler — if the process restarts at 01:59 UTC the 02:00 job will still fire (memory jobstore + cron trigger), so that's fine; but if you ever switch to date/interval triggers, missed jobs will be lost. Document the choice."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100% (16/16)", "frontend": "N/A (backend-only request)"},
+  "test_credentials": "N/A — no end-user auth on tested endpoints. CRON_SECRET=dev-cron-secret-change-me. delivered@resend.dev used as Resend sandbox.",
+  "seed_data_creation": "One TEST_<uuid8> StatusCheck row in Mongo (transient). Two sandbox Resend sends to delivered@resend.dev (discarded by Resend). No Supabase rows (tables still absent — unchanged from iter_2).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "16/16 pytest suite remains green after APScheduler integration. Scheduler logs '[scheduler] started — sync-fees scheduled nightly at 02:00 UTC' exactly once per Python process; this is verified via /var/log/supervisor/backend.err.log. The job does NOT execute during typical test windows (cron hour=2 UTC). If you need to verify the job runs, either (a) temporarily change the trigger to IntervalTrigger(seconds=5) and watch logs, or (b) directly `await _scheduled_sync_fees()` from a one-off pytest. Multi-worker prod warning documented under critical_code_review_comments (potential N-fold redundant writes).",
+  "rca of the issue": "No regression. APScheduler 3.11.2 installed cleanly via apscheduler>=3.10.4 in requirements.txt. Startup hook is idempotent thanks to `if _scheduler.running: return`. Shutdown hook correctly tears it down. The two '[scheduler] started' log lines correspond to two distinct supervisor process restarts (PIDs 1696 and 1703 confirmed via grepping 'Started server process' adjacent log lines) — not a duplicate-start within one process."
+}

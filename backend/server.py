@@ -18,6 +18,8 @@ import httpx
 from pydantic import BaseModel, Field, ConfigDict
 
 from emergentintegrations.llm.chat import LlmChat, UserMessage, TextDelta, StreamDone
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 
 ROOT_DIR = Path(__file__).parent
@@ -721,3 +723,55 @@ logger = logging.getLogger(__name__)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+    if _scheduler.running:
+        _scheduler.shutdown(wait=False)
+
+
+# ============================================================
+# In-process APScheduler — runs sync-fees nightly at 02:00 UTC
+# ============================================================
+_scheduler = AsyncIOScheduler(timezone="UTC")
+
+
+async def _scheduled_sync_fees() -> None:
+    """Internal job: same logic as POST /api/cron/sync-fees but bypasses auth."""
+    started_at = datetime.now(timezone.utc)
+    logger.info("[scheduler] sync-fees starting…")
+    try:
+        fees = await _fetch_all_exchange_fees()
+        updated_count = sum(1 for f in fees if f["source"] == "api")
+        fallback_count = sum(1 for f in fees if f["source"] == "fallback")
+        if SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY:
+            try:
+                await _supabase_upsert("exchange_fees", fees, on_conflict="exchange_id")
+                await _supabase_insert("cron_runs", {
+                    "job_name": "sync-fees",
+                    "started_at": started_at.isoformat(),
+                    "completed_at": datetime.now(timezone.utc).isoformat(),
+                    "success": True,
+                    "updated_count": updated_count,
+                    "fallback_count": fallback_count,
+                    "errors": [],
+                })
+            except HTTPException as e:
+                logger.warning(f"[scheduler] Supabase write failed: {e.detail}")
+        logger.info(f"[scheduler] sync-fees done. updated={updated_count} fallback={fallback_count}")
+    except Exception:
+        logger.exception("[scheduler] sync-fees crashed")
+
+
+@app.on_event("startup")
+async def _start_scheduler():
+    if _scheduler.running:
+        return
+    # Run at 02:00 UTC every day
+    _scheduler.add_job(
+        _scheduled_sync_fees,
+        CronTrigger(hour=2, minute=0),
+        id="sync-fees-nightly",
+        replace_existing=True,
+        max_instances=1,
+        coalesce=True,
+    )
+    _scheduler.start()
+    logger.info("[scheduler] started — sync-fees scheduled nightly at 02:00 UTC")
