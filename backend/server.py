@@ -87,14 +87,14 @@ async def get_status_checks():
 # Live ticker (CoinGecko, cached 60 s)
 # ============================================================
 TICKER_COINS = [
-    {"pair": "XBTUSD",  "label": "BTC/USD"},
-    {"pair": "ETHUSD",  "label": "ETH/USD"},
-    {"pair": "BNBUSD",  "label": "BNB/USD"},
-    {"pair": "SOLUSD",  "label": "SOL/USD"},
-    {"pair": "XRPUSD",  "label": "XRP/USD"},
-    {"pair": "ADAUSD",  "label": "ADA/USD"},
-    {"pair": "DOGEUSD", "label": "DOGE/USD"},
-    {"pair": "AVAXUSD", "label": "AVAX/USD"},
+    {"pair": "XBTUSD",  "label": "BTC/USD",  "aliases": ["XXBTZUSD"]},
+    {"pair": "ETHUSD",  "label": "ETH/USD",  "aliases": ["XETHZUSD"]},
+    {"pair": "BNBUSD",  "label": "BNB/USD",  "aliases": []},
+    {"pair": "SOLUSD",  "label": "SOL/USD",  "aliases": []},
+    {"pair": "XRPUSD",  "label": "XRP/USD",  "aliases": ["XXRPZUSD"]},
+    {"pair": "ADAUSD",  "label": "ADA/USD",  "aliases": []},
+    {"pair": "XDGUSD",  "label": "DOGE/USD", "aliases": ["XXDGZUSD"]},
+    {"pair": "AVAXUSD", "label": "AVAX/USD", "aliases": []},
 ]
 
 # Static exchange-fee items (these don't change minute-to-minute)
@@ -131,16 +131,22 @@ async def _fetch_prices() -> list:
 
     # Kraken sometimes returns altered keys (e.g. XXBTZUSD); build a lookup by
     # checking common prefixes / matching substring.
-    def find_row(pair: str) -> dict | None:
-        if pair in result:
-            return result[pair]
-        # try with X prefix (XBTUSD -> XXBTZUSD)
-        candidates = [k for k in result if pair.replace("USD", "") in k]
-        return result[candidates[0]] if candidates else None
+    def find_row(coin: dict) -> dict | None:
+        if coin["pair"] in result:
+            return result[coin["pair"]]
+        for alias in coin.get("aliases", []):
+            if alias in result:
+                return result[alias]
+        # Last-resort substring match (strip USD suffix)
+        stem = coin["pair"].replace("USD", "")
+        for k, v in result.items():
+            if stem in k:
+                return v
+        return None
 
     items = []
     for c in TICKER_COINS:
-        row = find_row(c["pair"])
+        row = find_row(c)
         if not row:
             continue
         try:
