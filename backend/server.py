@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+import re as _re_module
+from fastapi import FastAPI, APIRouter, HTTPException, Request as FastAPIRequest
 from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -395,7 +396,7 @@ async def _supabase_select(table: str, params: dict | None = None) -> list:
 # ============================================================
 # Email subscribe (Resend Audience + Supabase log)
 # ============================================================
-EMAIL_RX = __import__("re").compile(r"^[^\s@]+@[^\s@]+\.[^\s@]{2,}$")
+EMAIL_RX = _re_module.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]{2,}$")
 
 _subscribe_rate: dict[str, float] = {}  # ip -> last subscribe ts
 _SUBSCRIBE_TTL = 60.0
@@ -440,14 +441,19 @@ def _welcome_html(first_name: str | None, preferences: list[str], unsubscribe_ur
 
 
 @api_router.post("/subscribe")
-async def subscribe(req: SubscribeRequest, request: __import__("fastapi").Request):
+async def subscribe(req: SubscribeRequest, request: FastAPIRequest):
     email = (req.email or "").strip().lower()
     if not email or not EMAIL_RX.match(email) or len(email) > 254:
         raise HTTPException(status_code=400, detail="Please enter a valid email address.")
 
-    ip = (request.headers.get("x-forwarded-for", "").split(",")[0].strip()
-          or request.client.host if request.client else "unknown")
+    xff = (request.headers.get("x-forwarded-for", "").split(",")[0].strip())
+    ip = xff or (request.client.host if request.client else "unknown")
     now = time.time()
+    # Periodic GC: keep dict bounded by evicting entries older than 2× TTL
+    if len(_subscribe_rate) > 1000:
+        cutoff = now - (_SUBSCRIBE_TTL * 2)
+        for k in [k for k, v in _subscribe_rate.items() if v < cutoff]:
+            _subscribe_rate.pop(k, None)
     last = _subscribe_rate.get(ip, 0.0)
     if now - last < _SUBSCRIBE_TTL:
         raise HTTPException(status_code=429, detail="Too many requests. Please wait a minute.")
@@ -645,7 +651,7 @@ async def get_fees():
 
 
 @api_router.post("/cron/sync-fees")
-async def sync_fees(request: __import__("fastapi").Request):
+async def sync_fees(request: FastAPIRequest):
     """Triggered by external scheduler. Auth via Authorization: Bearer <CRON_SECRET>."""
     auth = request.headers.get("authorization", "")
     if not CRON_SECRET or auth != f"Bearer {CRON_SECRET}":

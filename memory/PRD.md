@@ -3,9 +3,87 @@
 ## Original Problem Statement
 > "i built this with claude, how ever i want to improve the project and make imporve on the foundation ive built im open to coming up with a better color scheme"
 >
-> Subsequent session: "continue building this project" → assume defaults.
+> Session 2: "continue building this project" → assume defaults.
+> Session 3: Wire Supabase + Resend lead capture; replace static EXCHANGES with a periodic fee scrape; cascade brutalist design to ScoreRing / FeeCalculator / TaxComparisonTable / hardware-wallets / tax-software / security pages.
 
-User uploaded `cryptoffiliate-main.zip` — a Next.js 14 affiliate platform with 30+ pages, "Editorial Neo-Brutalism" design already applied in iterations 1-2.
+## Goal
+Make the platform's lead capture + nightly fee sync actually functional end-to-end, and start cascading the brutalist design language across the supporting components.
+
+## User Personas
+- Crypto-curious newcomer, active trader, self-custody focused, tax-season researcher.
+
+## Tech Stack
+- Next.js 14 App Router + TypeScript (frontend, port 3000)
+- FastAPI + MongoDB + Supabase (REST) + Resend (REST) (backend, port 8001; k8s ingress routes `/api/*` here)
+- Tailwind + CSS-variable brutalist design system
+- Claude Sonnet 4.6 via `emergentintegrations` + EMERGENT_LLM_KEY
+- Kraken public API (live ticker)
+- Resend (transactional email + audience)
+
+## What's Been Implemented
+
+### Iteration 4 — Supabase + Resend + fee scrape + design cascade (2026-06-09)
+**Backend (`/app/backend/server.py`)**
+- `POST /api/subscribe` — email validation, IP-keyed 60 s rate limit, Resend Audience + welcome email + Supabase log; graceful-degrades when either service is misconfigured.
+- `GET /api/fees` — returns 5-exchange fee table, reads from Supabase `exchange_fees` when present, else falls back to live fetch.
+- `POST /api/cron/sync-fees` — Bearer-token authed, parallel fetches fees from Kraken + Bybit, upserts to Supabase `exchange_fees` + logs the run in `cron_runs`. Geo-blocked exchanges (Binance, OKX, Coinbase) use published standard tier as fallback.
+- Helpers added: `_supabase_upsert / _insert / _select` (REST), `_fetch_kraken_exchange_fee`, `_fetch_bybit_exchange_fee`, `_fetch_all_exchange_fees`.
+- Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, RESEND_AUDIENCE_ID, RESEND_FROM_DOMAIN, SITE_URL, CRON_SECRET.
+
+**Frontend**
+- `FeeCalculator.tsx` — fully rewritten in brutalist style: editorial header, mint "SAVE" callout, ranked rows with cheapest/worst color coding, vermilion CTAs, 2-3 px ink borders + offset shadows.
+- `TaxComparisonTable.tsx` — fully rewritten: bordered filter/sort pill bar, jet-black header row, mint commission pills, brutalist check/cross icons, expanded row brutalist detail panel, ink footer.
+
+**Bug fixes**
+- Removed leftover CRA `utils.js` that was shadowing `utils.ts` in Next.js's module resolution (was causing 500s on /tools/fee-calculator).
+
+**Backend tests** — 16/16 pass (100%): existing 9 + new 7 covering /subscribe valid/invalid/rate-limit, /fees, /cron/sync-fees no-auth/wrong-bearer/correct-bearer.
+
+### Iteration 3 — Live integrations (2026-06-09)
+- Live ticker via Kraken (`/api/ticker`); Claude Sonnet 4.6 streamed `/api/ai-advisor`; non-streaming `/api/ai-advisor/analyze`.
+- Frontend Next.js install repaired (was wrongly on CRA); dead Next.js `/api/ai-advisor` route removed.
+
+### Iteration 2 — Inner-page cascade
+- ExchangeCard, ExchangeComparisonTable, BonusAlertCapture, /reviews restyled.
+
+### Iteration 1 — Foundation
+- Editorial Neo-Brutalism design system established; Ticker, Nav, Footer, AIChat, HomeExchangeTable, homepage rewritten.
+
+## Files Modified This Iteration
+- `/app/backend/server.py` — added subscribe / fees / cron endpoints + Supabase + Resend helpers; ~720 lines now (split candidate for next iteration).
+- `/app/backend/.env` — added SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_*, SITE_URL, CRON_SECRET.
+- `/app/frontend/src/components/FeeCalculator.tsx` — brutalist rewrite.
+- `/app/frontend/src/components/TaxComparisonTable.tsx` — brutalist rewrite.
+- Deleted `/app/frontend/src/lib/utils.js` (stale CRA shadow).
+
+## Action Items For User
+1. **Run the SQL schemas** in your Supabase project (Supabase Dashboard → SQL Editor):
+   - `/app/frontend/supabase-subscribers-schema.sql`
+   - `/app/frontend/supabase-fees-schema.sql`
+   - `/app/frontend/supabase-schema.sql` (creates the base `exchanges` table that the fees schema references)
+2. **Swap `SUPABASE_SERVICE_ROLE_KEY`** in `/app/backend/.env` — the value you provided is the *publishable* key (`sb_publishable_…`). Get the actual service-role key (starts with `eyJ…`) from Supabase → Project Settings → API → "service_role" secret, paste, then `sudo supervisorctl restart backend`.
+3. **Verify Resend `from` domain** — `cryptoffiliate.com` must be a verified sending domain in your Resend account or emails will bounce.
+
+## Prioritized Backlog
+
+### P0 (next session)
+- **Cascade brutalist design to inner pages** — `/hardware-wallets`, `/tax-software`, `/security`, `/cloud-mining`, `/trading-bots` still render on the dark cyberpunk background with the old card style. The component-level brutalist islands (FeeCalculator, TaxComparisonTable) look great but sit on a dark page — needs a coherent page-level treatment.
+- **Periodic fee-sync trigger** — `/api/cron/sync-fees` is only triggered by external scheduler. Either (a) document the curl-cron line for Vercel/cron-job.org, or (b) add an in-process APScheduler in `server.py`.
+
+### P1
+- Split `server.py` (~720 lines) into `routes/{ai,ticker,subscribe,fees}.py` before adding more endpoints.
+- Move hard-coded fee fallbacks + AI system prompt to a single JSON config (`/app/backend/data/fees.json`).
+- Mobile responsive pass on `/compare`, `/reviews`, `/hardware-wallets`, `/tax-software`.
+- Multi-turn AI memory persisted in Mongo (currently rebuilds context per request).
+
+### P2
+- Per-session rate-limit on `/api/ai-advisor` to protect the EMERGENT_LLM_KEY budget.
+- `Last updated` freshness badge on every comparison table (reading from `exchange_fees.fetched_at`).
+- Animated number counters on hero stats.
+
+## Notes
+- Bybit/Binance APIs are geo-blocked from the Emergent container IP (HTTP 403/451) — the cron job uses published standard tier as the fallback for those exchanges. Switch the cron to run from a server with unrestricted egress (e.g. a Vercel/Cloudflare cron) to get live values for all 5 exchanges.
+- CoinGecko free tier rate-limits this IP range aggressively, so the live ticker uses Kraken instead (Kraken returns BTC at the 0.25 % base tier in their data — this is actually accurate; the 0.16 % figure is a Pro-tier rate).
 
 ## Goal
 Wire up the live integrations that were placeholders, so the platform feels real end-to-end: live market ticker + AI advisor.
