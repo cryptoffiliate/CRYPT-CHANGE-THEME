@@ -1298,3 +1298,184 @@ html:has(.brutalist-page) {
   height: 8px !important;
   border: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BRUTALIST MOBILE RESPONSIVE — @media (max-width: 768px)
+   Tightens up the editorial brutalist layout for phone-class viewports.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Prevent any horizontal scroll on the page itself */
+  html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+
+  /* Container padding tightening */
+  .brutalist-page .container,
+  .brutalist-page .container-sm {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Hero typography shrinks */
+  .brutalist-page .heading-xl { font-size: clamp(36px, 9vw, 56px) !important; line-height: 1.05 !important; }
+  .brutalist-page .heading-lg { font-size: clamp(28px, 7vw, 42px) !important; line-height: 1.1 !important; }
+  .brutalist-page .heading-md { font-size: clamp(22px, 5.5vw, 32px) !important; line-height: 1.15 !important; }
+  .brutalist-page .body-lg    { font-size: 15px !important; line-height: 1.55 !important; }
+
+  /* Section vertical padding shrinks */
+  .brutalist-page section .container,
+  .brutalist-page section .container-sm {
+    padding-top: 48px !important;
+    padding-bottom: 48px !important;
+  }
+
+  /* Stats grids that use grid-template-columns: repeat(4, 1fr) → 2 cols on mobile */
+  .brutalist-page [style*='grid-template-columns:repeat(4, 1fr)'],
+  .brutalist-page [style*='grid-template-columns: repeat(4, 1fr)'] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* 3-col grids → 1 col on mobile */
+  .brutalist-page [style*='grid-template-columns:repeat(3, 1fr)'],
+  .brutalist-page [style*='grid-template-columns: repeat(3, 1fr)'] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Hero grid (text + AI chat side-by-side) → stacked */
+  .brutalist-page .grid-hero {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+
+  /* Editorial flex headers (eyebrow + button on same row) → stack & left-align */
+  .brutalist-page section > .container > div[style*='display: flex'][style*='justify-content: space-between'],
+  .brutalist-page section > .container > div[style*='display:flex'][style*='justify-content:space-between'] {
+    align-items: flex-start !important;
+  }
+
+  /* Filter & sort pill bars in tax/exchange tables: tighter wrap */
+  .brutalist-page [data-testid='tax-comparison-table'] > div:first-child,
+  .brutalist-page [data-testid='exchange-comparison-table'] > div:first-child {
+    padding: 10px 12px !important;
+    gap: 6px !important;
+  }
+
+  /* Horizontally-scrollable table wrappers — add a subtle scroll-hint edge */
+  .brutalist-page [data-testid='tax-comparison-table'] > div > div[style*='overflow-x'],
+  .brutalist-page [data-testid='tax-comparison-table'] > div > div[style*='overflowX'],
+  .brutalist-page .table-scroll,
+  .brutalist-page div[style*='overflowX: "auto"'],
+  .brutalist-page div[style*='overflow-x:auto'] {
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+  }
+  .brutalist-page [data-testid='tax-comparison-table']::after,
+  .brutalist-page [data-testid='exchange-comparison-table']::after {
+    content: "▶ swipe to see all columns";
+    display: block;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #4A4A4A;
+    background: #FFFCE0;
+    padding: 8px 12px;
+    border: 2px solid #111111;
+    border-top: 1.5px solid #111111;
+    margin-top: -2px;
+  }
+
+  /* FeeCalculator: tighten grid columns on mobile */
+  .brutalist-page [data-testid='fee-calculator'] [style*='grid-template-columns: 40px'],
+  .brutalist-page [data-testid='fee-calculator'] [style*='grid-template-columns:40px'] {
+    grid-template-columns: 28px minmax(110px, 1.4fr) 70px 78px !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+  }
+  /* Hide the relative-cost bar column on mobile */
+  .brutalist-page [data-testid='fee-calculator'] [style*='grid-template-columns'] > :nth-child(3) {
+    display: none !important;
+  }
+  .brutalist-page [data-testid='fee-calculator'] [style*='grid-template-columns'] > :nth-child(4) {
+    text-align: right !important;
+  }
+
+  /* Hide "Relative cost" column header text */
+  .brutalist-page [data-testid='fee-calculator'] [style*='Relative cost'] { display: none !important; }
+
+  /* Top bar (Issue 27 / Editorial / EST. 2024) on home — wrap nicely */
+  .brutalist-page section > div[style*='justify-content:space-between'][style*='backdropFilter'],
+  .brutalist-page section > div[style*='justify-content: space-between'][style*='backdrop-filter'] {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    font-size: 9px !important;
+    padding: 6px 14px !important;
+  }
+  .brutalist-page section > div[style*='justify-content:space-between'] > .hidden,
+  .brutalist-page section > div[style*='justify-content: space-between'] > .hidden { display: none !important; }
+
+  /* CTA button row stacks vertically with full-width buttons */
+  .brutalist-page .btn-primary,
+  .brutalist-page .btn-ghost,
+  .brutalist-page .btn-klein {
+    padding: 10px 16px !important;
+    font-size: 12px !important;
+  }
+
+  /* Sticky-first-column on horizontal table on mobile (when supported) */
+  .brutalist-page table th:first-child,
+  .brutalist-page table td:first-child {
+    background: inherit;
+  }
+
+  /* AIChat embedded panel: ensure not overflowing right */
+  .brutalist-page .grid-hero > :last-child > div { width: 100% !important; }
+
+  /* Editorial pull-quote font size */
+  .brutalist-page p[style*='clamp(30px'] {
+    font-size: clamp(22px, 7vw, 36px) !important;
+  }
+
+  /* Vertical card grids — reduce padding inside cards */
+  .brutalist-page .glow-card,
+  .brutalist-page a.glow-card {
+    padding: 22px 18px !important;
+    min-height: auto !important;
+  }
+
+  /* Reviews list grid → 1 col on mobile, smaller padding */
+  .brutalist-page [style*='minmax(320px, 1fr)'],
+  .brutalist-page [style*='minmax(320px,1fr)'] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Sidebar layouts (e.g. hardware-wallets has 2-col main+aside layouts) */
+  .brutalist-page [class*='lg:grid-cols-3'][class*='grid'],
+  .brutalist-page [class*='md:grid-cols-2'][class*='grid'],
+  .brutalist-page [class*='md:grid-cols-3'][class*='grid'],
+  .brutalist-page [class*='lg:grid-cols-2'][class*='grid'] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Page wrappers with explicit max-width: shouldn't overflow */
+  .brutalist-page {
+    overflow-x: hidden;
+  }
+
+  /* Top status bar on homepage: shrink and hide the middle disclosure */
+  .brutalist-page span.hidden { display: none !important; }
+}
+
+/* Even tighter for very narrow screens */
+@media (max-width: 420px) {
+  .brutalist-page .heading-xl { font-size: 38px !important; }
+  .brutalist-page .heading-lg { font-size: 28px !important; }
+
+  /* CTA buttons go full-width and stack */
+  .brutalist-page section .btn-primary,
+  .brutalist-page section .btn-ghost,
+  .brutalist-page section .btn-klein {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+}
+

@@ -1,8 +1,8 @@
 {
-  "/compare/page": "app/compare/page.js",
   "/page": "app/page.js",
+  "/compare/page": "app/compare/page.js",
   "/reviews/page": "app/reviews/page.js",
   "/hardware-wallets/page": "app/hardware-wallets/page.js",
-  "/quiz/page": "app/quiz/page.js",
-  "/tools/fee-calculator/page": "app/tools/fee-calculator/page.js"
+  "/tax-software/page": "app/tax-software/page.js",
+  "/hardware-wallets/[slug]/page": "app/hardware-wallets/[slug]/page.js"
 }

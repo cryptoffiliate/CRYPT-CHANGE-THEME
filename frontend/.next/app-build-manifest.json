@@ -35,6 +35,16 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/quiz/page.js"
+    ],
+    "/tax-software/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tax-software/page.js"
+    ],
+    "/hardware-wallets/[slug]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/hardware-wallets/[slug]/page.js"
     ]
   }
 }
