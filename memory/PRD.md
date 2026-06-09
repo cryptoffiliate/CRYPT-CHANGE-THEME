@@ -22,7 +22,18 @@ Make the platform's lead capture + nightly fee sync actually functional end-to-e
 
 ## What's Been Implemented
 
-### Iteration 4 — Supabase + Resend + fee scrape + design cascade (2026-06-09)
+### Iteration 5 — Brutalist page cascade + in-process cron (2026-06-09)
+**Frontend**
+- **`.brutalist-page` CSS scope** added to `globals.css` (~200 lines) — re-flips the legacy dark-theme adaptations back to the editorial-brutalist light palette inside any element that opts in. Maps `bg-slate-50` → bone-paper, `bg-white` → surface, `text-slate-900` → ink, `.card` → bordered+offset-shadow, `.section-label` → vermilion bullet eyebrow, `.btn-outline` → brutalist outline button, inputs → 2 px ink border + zero radius, rounded-* utilities → 0. Includes inline-style re-flips for `#FFFFFF / #F4F4F0 / #111111 / 2px solid #111111` so React inline styles render correctly inside the scope.
+- **Cascaded to 5 P0 pages** by adding `brutalist-page` class to the root wrapper of `/hardware-wallets`, `/tax-software`, `/security`, `/cloud-mining`, `/trading-bots`. All 5 now render in the editorial brutalist style with the dark navbar/ticker chrome remaining as the consistent global frame.
+
+**Backend**
+- **APScheduler in-process** (`AsyncIOScheduler`) — schedules `_scheduled_sync_fees()` at **02:00 UTC nightly**. Same logic as `POST /api/cron/sync-fees` but bypasses auth (internal). Logs to `cron_runs` table when Supabase is configured. Boot log confirms: `[scheduler] started — sync-fees scheduled nightly at 02:00 UTC`.
+- `apscheduler>=3.10.4` pinned in `requirements.txt`.
+
+**Backend tests** — all 16/16 still pass (100%) after the scheduler integration.
+
+### Iteration 4 — Supabase + Resend + fee scrape + first design cascade (2026-06-09)
 **Backend (`/app/backend/server.py`)**
 - `POST /api/subscribe` — email validation, IP-keyed 60 s rate limit, Resend Audience + welcome email + Supabase log; graceful-degrades when either service is misconfigured.
 - `GET /api/fees` — returns 5-exchange fee table, reads from Supabase `exchange_fees` when present, else falls back to live fetch.
@@ -67,18 +78,18 @@ Make the platform's lead capture + nightly fee sync actually functional end-to-e
 ## Prioritized Backlog
 
 ### P0 (next session)
-- **Cascade brutalist design to inner pages** — `/hardware-wallets`, `/tax-software`, `/security`, `/cloud-mining`, `/trading-bots` still render on the dark cyberpunk background with the old card style. The component-level brutalist islands (FeeCalculator, TaxComparisonTable) look great but sit on a dark page — needs a coherent page-level treatment.
-- **Periodic fee-sync trigger** — `/api/cron/sync-fees` is only triggered by external scheduler. Either (a) document the curl-cron line for Vercel/cron-job.org, or (b) add an in-process APScheduler in `server.py`.
+- **Run the 3 Supabase SQL files + swap the publishable key for the real service-role JWT** (see "Action Items For User" above). Until these are done, all Supabase writes 404 with `PGRST205` and the nightly cron's persistence step is a no-op.
+- **Apply `brutalist-page` to the remaining inner pages** that still render dark: `/about`, `/disclosure`, `/privacy`, `/quiz`, `/alerts`, `/bonuses`, `/proof-of-reserves`, `/regulatory-monitor`, `/security-audit`, `/status`, `/tax-harvesting`, `/volume`, `/whitepaper`, `/scam-detector`, `/ai-advisor`, and all `/tools/*` (8 tool pages). Same one-line change as the 5 P0 pages.
 
 ### P1
-- Split `server.py` (~720 lines) into `routes/{ai,ticker,subscribe,fees}.py` before adding more endpoints.
-- Move hard-coded fee fallbacks + AI system prompt to a single JSON config (`/app/backend/data/fees.json`).
+- Split `server.py` (~770 lines) into `routes/{ai,ticker,subscribe,fees,scheduler}.py`.
+- Move hard-coded fee fallbacks + AI system prompt to a single `data/fees.json` config.
 - Mobile responsive pass on `/compare`, `/reviews`, `/hardware-wallets`, `/tax-software`.
-- Multi-turn AI memory persisted in Mongo (currently rebuilds context per request).
+- Multi-turn AI chat memory persisted in Mongo (currently rebuilds context per request).
 
 ### P2
 - Per-session rate-limit on `/api/ai-advisor` to protect the EMERGENT_LLM_KEY budget.
-- `Last updated` freshness badge on every comparison table (reading from `exchange_fees.fetched_at`).
+- `Last updated · N hours ago` freshness badge on every comparison table (reading `exchange_fees.fetched_at`).
 - Animated number counters on hero stats.
 
 ## Notes
