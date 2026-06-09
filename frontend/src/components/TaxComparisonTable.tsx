@@ -1,52 +1,152 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment } from "react";
 import Link from "next/link";
 import type { TaxSoftware } from "@/data/tax-software";
 
 type SortKey = "rating" | "pricingStart" | "commissionPct" | "exchanges";
 
+const INK = "#111111";
+const PAPER = "#F4F4F0";
+const VERMILION = "#FF5722";
+const KLEIN = "#002FA7";
+const CANARY = "#FFD600";
+const MINT = "#00C853";
+const DANGER = "#D50000";
+
 function Check({ val }: { val: boolean }) {
-  return val
-    ? <span className="text-emerald-500 text-base">✓</span>
-    : <span className="text-red-400 text-sm">✗</span>;
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 22,
+        height: 22,
+        background: val ? MINT : DANGER,
+        color: val ? INK : "#FFFFFF",
+        border: `1.5px solid ${INK}`,
+        fontFamily: "var(--font-mono)",
+        fontSize: 12,
+        fontWeight: 900,
+      }}
+    >
+      {val ? "✓" : "✕"}
+    </span>
+  );
 }
 
 function ExpandedRow({ platform }: { platform: TaxSoftware }) {
+  const cellBase: React.CSSProperties = {
+    flex: "1 1 220px",
+    background: "#FFFFFF",
+    border: `2px solid ${INK}`,
+    padding: 14,
+  };
+  const label: React.CSSProperties = {
+    fontFamily: "var(--font-mono)",
+    fontSize: 10,
+    letterSpacing: ".22em",
+    textTransform: "uppercase",
+    color: "#4A4A4A",
+    marginBottom: 10,
+    fontWeight: 700,
+  };
   return (
-    <tr className="bg-slate-50/50">
-      <td colSpan={8} className="px-4 pb-4 pt-1">
-        <div className="flex gap-3 flex-wrap">
-          <div className="flex-1 min-w-44 bg-white rounded-xl border border-slate-100 p-3">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Best for</p>
-            <div className="flex flex-wrap gap-1.5">
+    <tr style={{ background: PAPER }}>
+      <td colSpan={8} style={{ padding: "0 14px 18px" }}>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          {/* Best for */}
+          <div style={cellBase}>
+            <p style={label}>Best for</p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {platform.bestFor.map((b) => (
-                <span key={b} className="text-xs px-2 py-1 rounded-full font-medium"
-                  style={{ background: platform.logoColor + "12", color: platform.logoColor }}>
+                <span
+                  key={b}
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: "4px 9px",
+                    background: platform.logoColor,
+                    color: INK,
+                    border: `1.5px solid ${INK}`,
+                    letterSpacing: ".02em",
+                  }}
+                >
                   {b}
                 </span>
               ))}
             </div>
           </div>
-          <div className="flex-1 min-w-44 bg-white rounded-xl border border-slate-100 p-3">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Affiliate program</p>
-            <p className="text-sm font-semibold text-slate-900">{platform.commissionPct}% first sale
-              {platform.recurringPct > 0 && ` · ${platform.recurringPct}% recurring`}
+          {/* Affiliate */}
+          <div style={cellBase}>
+            <p style={label}>Affiliate program</p>
+            <p
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 16,
+                fontWeight: 900,
+                color: INK,
+                margin: 0,
+              }}
+            >
+              {platform.commissionPct}% first sale
+              {platform.recurringPct > 0 && (
+                <span
+                  style={{ color: MINT, marginLeft: 6 }}
+                >
+                  · {platform.recurringPct}% recur.
+                </span>
+              )}
             </p>
-            <p className="text-xs text-slate-400 mt-1">
-              Cookie: {platform.cookieDays === "lifetime" ? "Lifetime" : `${platform.cookieDays} days`} ·
-              Min payout: ${platform.minPayout}
+            <p
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                color: "#4A4A4A",
+                margin: "4px 0 8px",
+              }}
+            >
+              Cookie:{" "}
+              {platform.cookieDays === "lifetime"
+                ? "Lifetime"
+                : `${platform.cookieDays} days`}{" "}
+              · Min payout: ${platform.minPayout}
             </p>
-            <a href={platform.affiliateSignupUrl} target="_blank" rel="noopener noreferrer"
-              className="text-xs text-brand-500 font-medium mt-1.5 inline-block hover:text-brand-600">
+            <a
+              href={platform.affiliateSignupUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                fontWeight: 800,
+                color: KLEIN,
+                textDecoration: "underline",
+                letterSpacing: ".04em",
+              }}
+            >
               Join program →
             </a>
           </div>
-          <div className="flex-1 min-w-44 bg-white rounded-xl border border-slate-100 p-3">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tax forms</p>
-            <div className="flex flex-wrap gap-1">
+          {/* Tax forms */}
+          <div style={cellBase}>
+            <p style={label}>Tax forms</p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
               {platform.forms.map((f) => (
-                <span key={f} className="text-xs bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono">
+                <span
+                  key={f}
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: INK,
+                    background: PAPER,
+                    border: `1.5px solid ${INK}`,
+                    padding: "3px 7px",
+                  }}
+                >
                   {f}
                 </span>
               ))}
@@ -58,7 +158,11 @@ function ExpandedRow({ platform }: { platform: TaxSoftware }) {
   );
 }
 
-export function TaxComparisonTable({ platforms }: { platforms: TaxSoftware[] }) {
+export function TaxComparisonTable({
+  platforms,
+}: {
+  platforms: TaxSoftware[];
+}) {
   const [sortKey, setSortKey] = useState<SortKey>("rating");
   const [sortAsc, setSortAsc] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -67,136 +171,501 @@ export function TaxComparisonTable({ platforms }: { platforms: TaxSoftware[] }) 
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) setSortAsc((a) => !a);
-    else { setSortKey(key); setSortAsc(key === "pricingStart"); }
+    else {
+      setSortKey(key);
+      setSortAsc(key === "pricingStart");
+    }
   };
 
   const sorted = useMemo(() => {
     let list = [...platforms];
-    if (usOnly) list = list.filter((p) => p.id === "coinledger" || p.id === "taxbit" || p.id === "zenledger");
+    if (usOnly)
+      list = list.filter(
+        (p) => p.id === "coinledger" || p.id === "taxbit" || p.id === "zenledger"
+      );
     if (freeOnly) list = list.filter((p) => p.freeTier);
     list.sort((a, b) => {
-      const va = a[sortKey] as number, vb = b[sortKey] as number;
+      const va = a[sortKey] as number;
+      const vb = b[sortKey] as number;
       return sortAsc ? va - vb : vb - va;
     });
     return list;
   }, [platforms, sortKey, sortAsc, usOnly, freeOnly]);
 
-  const SortTh = ({ k, label }: { k: SortKey; label: string }) => (
-    <th onClick={() => handleSort(k)}
-      className={`px-3 py-2.5 text-center text-xs font-semibold uppercase tracking-wider cursor-pointer select-none transition-colors ${
-        sortKey === k ? "text-brand-500 border-b-2 border-brand-500" : "text-slate-400 hover:text-slate-600"
-      }`}>
-      {label}{sortKey === k ? (sortAsc ? " ↑" : " ↓") : ""}
-    </th>
+  // ---- pills ----
+  const Pill = ({
+    label,
+    active,
+    onClick,
+    testid,
+  }: {
+    label: string;
+    active: boolean;
+    onClick: () => void;
+    testid: string;
+  }) => (
+    <button
+      onClick={onClick}
+      data-testid={testid}
+      style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: 11,
+        fontWeight: 800,
+        letterSpacing: ".06em",
+        textTransform: "uppercase",
+        padding: "6px 12px",
+        background: active ? INK : "#FFFFFF",
+        color: active ? PAPER : INK,
+        border: `2px solid ${INK}`,
+        cursor: "pointer",
+        boxShadow: active ? "2px 2px 0 0 #111111" : "none",
+      }}
+    >
+      {active ? "● " : "○ "}
+      {label}
+    </button>
   );
 
+  const SortPill = ({ k, label }: { k: SortKey; label: string }) => {
+    const active = sortKey === k;
+    return (
+      <button
+        onClick={() => handleSort(k)}
+        data-testid={`tax-sort-${k}`}
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: 11,
+          fontWeight: 800,
+          letterSpacing: ".06em",
+          textTransform: "uppercase",
+          padding: "6px 12px",
+          background: active ? VERMILION : "#FFFFFF",
+          color: INK,
+          border: `2px solid ${INK}`,
+          cursor: "pointer",
+          boxShadow: active ? "2px 2px 0 0 #111111" : "none",
+        }}
+      >
+        {label}
+        {active ? (sortAsc ? " ↑" : " ↓") : ""}
+      </button>
+    );
+  };
+
   return (
-    <div>
-      {/* Filter bar */}
-      <div className="flex flex-wrap gap-2 mb-3 text-xs items-center">
-        <span className="text-slate-400 font-semibold uppercase tracking-wider">Filter:</span>
-        {[
-          { label: "Free tier", active: freeOnly, toggle: () => setFreeOnly((v) => !v) },
-          { label: "US focus",  active: usOnly,   toggle: () => setUsOnly((v) => !v) },
-        ].map(({ label, active, toggle }) => (
-          <button key={label} onClick={toggle}
-            className={`px-3 py-1.5 rounded-full border-[1.5px] font-medium transition-all ${
-              active ? "bg-brand-50 text-brand-600 border-brand-400" : "bg-white text-slate-600 border-slate-200"
-            }`}>
-            {active && "✓ "}{label}
-          </button>
-        ))}
-        <span className="text-slate-400 font-semibold uppercase tracking-wider ml-2">Sort:</span>
-        {([["rating","Rating"],["pricingStart","Price"],["commissionPct","Commission"],["exchanges","Exchanges"]] as [SortKey,string][]).map(([k,l]) => (
-          <button key={k} onClick={() => handleSort(k)}
-            className={`px-3 py-1.5 rounded-full border-[1.5px] font-medium transition-all ${
-              sortKey === k ? "bg-brand-50 text-brand-600 border-brand-400" : "bg-white text-slate-600 border-slate-200"
-            }`}>
-            {l}{sortKey === k ? (sortAsc ? " ↑" : " ↓") : ""}
-          </button>
-        ))}
+    <div data-testid="tax-comparison-table">
+      {/* Filter / sort bar */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+          alignItems: "center",
+          padding: "12px 14px",
+          background: PAPER,
+          border: `2px solid ${INK}`,
+          borderBottom: "none",
+          boxShadow: "4px 0 0 0 #111111",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: ".22em",
+            textTransform: "uppercase",
+            color: "#4A4A4A",
+          }}
+        >
+          Filter ›
+        </span>
+        <Pill
+          label="Free tier"
+          active={freeOnly}
+          onClick={() => setFreeOnly((v) => !v)}
+          testid="tax-filter-free"
+        />
+        <Pill
+          label="US focus"
+          active={usOnly}
+          onClick={() => setUsOnly((v) => !v)}
+          testid="tax-filter-us"
+        />
+
+        <span
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: ".22em",
+            textTransform: "uppercase",
+            color: "#4A4A4A",
+            marginLeft: 8,
+          }}
+        >
+          Sort ›
+        </span>
+        <SortPill k="rating" label="Rating" />
+        <SortPill k="pricingStart" label="Price" />
+        <SortPill k="commissionPct" label="Commission" />
+        <SortPill k="exchanges" label="Exchanges" />
       </div>
 
-      <div className="card overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse min-w-[700px]">
+      {/* Table */}
+      <div
+        style={{
+          border: `3px solid ${INK}`,
+          background: "#FFFFFF",
+          boxShadow: "6px 6px 0 0 #111111",
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ overflowX: "auto" }}>
+          <table
+            style={{
+              width: "100%",
+              minWidth: 760,
+              borderCollapse: "collapse",
+            }}
+          >
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Platform</th>
-                <SortTh k="rating" label="Rating" />
-                <SortTh k="pricingStart" label="From" />
-                <SortTh k="commissionPct" label="Commission" />
-                <SortTh k="exchanges" label="Exchanges" />
-                <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">DeFi</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">Free</th>
-                <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Try it</th>
+              <tr
+                style={{
+                  background: INK,
+                  color: PAPER,
+                }}
+              >
+                {[
+                  ["Platform", "left"],
+                  ["Rating", "center"],
+                  ["From", "center"],
+                  ["Commission", "center"],
+                  ["Exchanges", "center"],
+                  ["DeFi", "center"],
+                  ["Free", "center"],
+                  ["Try", "right"],
+                ].map(([label, align]) => (
+                  <th
+                    key={label}
+                    style={{
+                      textAlign: align as "left" | "center" | "right",
+                      padding: "12px 14px",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: 10,
+                      fontWeight: 800,
+                      letterSpacing: ".22em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {sorted.map((p) => {
+              {sorted.map((p, idx) => {
                 const isExp = expandedId === p.id;
                 return (
-                  <>
-                    <tr key={p.id} onClick={() => setExpandedId(isExp ? null : p.id)}
-                      className={`cursor-pointer border-b border-slate-100 transition-colors hover:bg-slate-50 ${isExp ? "bg-brand-50/20" : ""}`}>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black font-mono flex-shrink-0"
-                            style={{ background: p.logoColor + "18", border: `1.5px solid ${p.logoColor}40`, color: p.logoColor }}>
+                  <Fragment key={p.id}>
+                    <tr
+                      onClick={() => setExpandedId(isExp ? null : p.id)}
+                      data-testid={`tax-row-${p.id}`}
+                      style={{
+                        background: isExp
+                          ? "#FFFCE0"
+                          : idx % 2 === 0
+                          ? "#FFFFFF"
+                          : PAPER,
+                        cursor: "pointer",
+                        borderBottom: `1.5px solid ${INK}`,
+                      }}
+                    >
+                      {/* Platform */}
+                      <td style={{ padding: "12px 14px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 36,
+                              height: 36,
+                              background: p.logoColor,
+                              color: INK,
+                              border: `2px solid ${INK}`,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "var(--font-mono)",
+                              fontSize: 13,
+                              fontWeight: 900,
+                              flexShrink: 0,
+                            }}
+                          >
                             {p.logo}
                           </div>
                           <div>
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-semibold text-sm text-slate-900">{p.name}</span>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 6,
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-display)",
+                                  fontSize: 15,
+                                  fontWeight: 800,
+                                  color: INK,
+                                  letterSpacing: "-.01em",
+                                }}
+                              >
+                                {p.name}
+                              </span>
                               {p.badge && (
-                                <span className="text-xs px-1.5 py-0.5 rounded-full font-semibold"
-                                  style={{ background: p.badgeColor! + "18", color: p.badgeColor! }}>
+                                <span
+                                  style={{
+                                    fontFamily: "var(--font-mono)",
+                                    fontSize: 9,
+                                    fontWeight: 800,
+                                    letterSpacing: ".15em",
+                                    textTransform: "uppercase",
+                                    padding: "2px 6px",
+                                    background: p.badgeColor || CANARY,
+                                    color: INK,
+                                    border: `1.5px solid ${INK}`,
+                                  }}
+                                >
                                   {p.badge}
                                 </span>
                               )}
                             </div>
-                            <p className="text-xs text-slate-400">{p.countries === 1 ? "US only" : `${p.countries}+ countries`}</p>
+                            <p
+                              style={{
+                                fontFamily: "var(--font-mono)",
+                                fontSize: 11,
+                                color: "#4A4A4A",
+                                margin: 0,
+                                letterSpacing: ".02em",
+                              }}
+                            >
+                              {p.countries === 1
+                                ? "US only"
+                                : `${p.countries}+ countries`}
+                            </p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-3 py-3 text-center">
-                        <p className="font-semibold text-sm text-slate-900">{p.rating}</p>
-                        <p className="text-xs text-slate-400">/5</p>
+
+                      {/* Rating */}
+                      <td
+                        style={{ textAlign: "center", padding: "12px 14px" }}
+                      >
+                        <p
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: 18,
+                            fontWeight: 900,
+                            color: INK,
+                            margin: 0,
+                          }}
+                        >
+                          {p.rating}
+                          <span
+                            style={{
+                              fontSize: 11,
+                              color: "#4A4A4A",
+                              fontWeight: 600,
+                            }}
+                          >
+                            /5
+                          </span>
+                        </p>
                       </td>
-                      <td className="px-3 py-3 text-center">
-                        <p className="font-semibold text-sm text-slate-900">${p.pricingStart}</p>
-                        <p className="text-xs text-slate-400">/yr</p>
+
+                      {/* From */}
+                      <td
+                        style={{ textAlign: "center", padding: "12px 14px" }}
+                      >
+                        <p
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: 16,
+                            fontWeight: 900,
+                            color: INK,
+                            margin: 0,
+                          }}
+                        >
+                          ${p.pricingStart}
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: 10,
+                            color: "#4A4A4A",
+                            margin: 0,
+                            letterSpacing: ".06em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          /yr
+                        </p>
                       </td>
-                      <td className="px-3 py-3 text-center">
-                        <p className="font-semibold text-sm text-emerald-600">{p.commissionPct}%</p>
-                        {p.recurringPct > 0 && <p className="text-xs text-slate-400">+{p.recurringPct}% recur.</p>}
+
+                      {/* Commission */}
+                      <td
+                        style={{ textAlign: "center", padding: "12px 14px" }}
+                      >
+                        <span
+                          style={{
+                            display: "inline-block",
+                            padding: "3px 10px",
+                            background: MINT,
+                            color: INK,
+                            border: `1.5px solid ${INK}`,
+                            fontFamily: "var(--font-mono)",
+                            fontSize: 13,
+                            fontWeight: 800,
+                          }}
+                        >
+                          {p.commissionPct}%
+                        </span>
+                        {p.recurringPct > 0 && (
+                          <p
+                            style={{
+                              fontFamily: "var(--font-mono)",
+                              fontSize: 9,
+                              color: "#4A4A4A",
+                              margin: "3px 0 0",
+                              letterSpacing: ".08em",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            +{p.recurringPct}% recur
+                          </p>
+                        )}
                       </td>
-                      <td className="px-3 py-3 text-center">
-                        <p className="font-semibold text-sm text-slate-900">{p.exchanges}+</p>
+
+                      {/* Exchanges */}
+                      <td
+                        style={{ textAlign: "center", padding: "12px 14px" }}
+                      >
+                        <p
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: 14,
+                            fontWeight: 800,
+                            color: INK,
+                            margin: 0,
+                          }}
+                        >
+                          {p.exchanges}+
+                        </p>
                       </td>
-                      <td className="px-3 py-3 text-center"><Check val={p.defiSupport} /></td>
-                      <td className="px-3 py-3 text-center"><Check val={p.freeTier} /></td>
-                      <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                        <a href={p.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored"
-                          className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-2 rounded-lg border-[1.5px] transition-all"
-                          style={{ color: p.logoColor, borderColor: p.logoColor + "50", background: p.logoColor + "10" }}>
+
+                      {/* DeFi */}
+                      <td
+                        style={{ textAlign: "center", padding: "12px 14px" }}
+                      >
+                        <Check val={p.defiSupport} />
+                      </td>
+
+                      {/* Free */}
+                      <td
+                        style={{ textAlign: "center", padding: "12px 14px" }}
+                      >
+                        <Check val={p.freeTier} />
+                      </td>
+
+                      {/* Try */}
+                      <td
+                        style={{ textAlign: "right", padding: "12px 14px" }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <a
+                          href={p.affiliateUrl}
+                          target="_blank"
+                          rel="noopener noreferrer sponsored"
+                          data-testid={`tax-cta-${p.id}`}
+                          style={{
+                            display: "inline-block",
+                            fontFamily: "var(--font-display)",
+                            fontSize: 11,
+                            fontWeight: 800,
+                            letterSpacing: ".06em",
+                            textTransform: "uppercase",
+                            background: VERMILION,
+                            color: INK,
+                            border: `2px solid ${INK}`,
+                            padding: "6px 12px",
+                            textDecoration: "none",
+                            boxShadow: "2px 2px 0 0 #111111",
+                          }}
+                        >
                           Try →
                         </a>
                       </td>
                     </tr>
-                    {isExp && <ExpandedRow key={`${p.id}-exp`} platform={p} />}
-                  </>
+                    {isExp && <ExpandedRow platform={p} />}
+                  </Fragment>
                 );
               })}
               {sorted.length === 0 && (
-                <tr><td colSpan={8} className="px-4 py-10 text-center text-sm text-slate-400">No platforms match filters.</td></tr>
+                <tr>
+                  <td
+                    colSpan={8}
+                    style={{
+                      padding: "40px 14px",
+                      textAlign: "center",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: 13,
+                      color: "#4A4A4A",
+                    }}
+                  >
+                    No platforms match these filters.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex justify-between text-xs text-slate-400 flex-wrap gap-2">
-          <span>Click any row to expand · Commission data from official program pages · June 2025</span>
-          <Link href="/disclosure" className="underline hover:text-slate-600">Affiliate disclosure</Link>
+
+        {/* Footer */}
+        <div
+          style={{
+            background: INK,
+            color: PAPER,
+            padding: "10px 14px",
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 8,
+            fontFamily: "var(--font-mono)",
+            fontSize: 10,
+            letterSpacing: ".08em",
+            textTransform: "uppercase",
+            borderTop: `2px solid ${INK}`,
+          }}
+        >
+          <span>
+            ► Click any row to expand · Synced from official program pages
+          </span>
+          <Link
+            href="/disclosure"
+            style={{
+              color: CANARY,
+              textDecoration: "underline",
+              textDecorationThickness: 2,
+              textUnderlineOffset: 3,
+            }}
+          >
+            Affiliate disclosure
+          </Link>
         </div>
       </div>
     </div>

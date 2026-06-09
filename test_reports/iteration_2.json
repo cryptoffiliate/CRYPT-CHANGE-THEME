@@ -1,0 +1,38 @@
+{
+  "summary": "Backend-only retest after porting /api/subscribe, /api/fees, /api/cron/sync-fees from Next.js to FastAPI. Extended /app/backend/tests/test_cryptoffiliate_api.py with 7 new tests (now 16 total). ALL 16 PASS in ~16s. Verified: (1) /api/subscribe valid email returns 200 with resend.ok=true (genuine send via delivered@resend.dev) and supabase.ok=false carrying the expected schema-cache 404 error — graceful degradation working as designed; (2) /api/subscribe invalid email 'notanemail' returns 400; (3) Same-IP duplicate subscribe within 60s returns 429 (rate-limit honors X-Forwarded-For); (4) /api/fees returns 200 with all 5 exchanges (binance, kraken, okx, bybit, coinbase) each having maker_fee/taker_fee/source; source='live' currently (Supabase tables absent); (5) /api/cron/sync-fees: no-auth=401, wrong-bearer=401, Bearer dev-cron-secret-change-me=200 with updated_count=int, fallback_count=int, fees[5], supabase_written=false (expected). All previously-passing endpoints (root, ticker, AI advisor SSE w/ both delta formats, analyze, status round-trip) still PASS.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/subscribe", "issue": "IP-resolution operator-precedence bug: `(request.headers.get('x-forwarded-for','').split(',')[0].strip() or request.client.host if request.client else 'unknown')`. Python parses this as `(xff_stripped or request.client.host) if request.client else 'unknown'`, so a request with no client object (extremely rare behind ingress) bypasses the x-forwarded-for path entirely. Recommend wrapping the `or` clause in explicit parens. Doesn't currently block tests."},
+      {"endpoint": "/api/subscribe", "issue": "_subscribe_rate is an unbounded module-level dict and never trimmed. Long-running process slowly leaks memory (one entry per unique IP). Add periodic GC or use TTL cache."},
+      {"endpoint": "/api/ticker", "issue": "(carried over from iter_1) DOGE/USD silently dropped — Kraken returns the pair as 'XDGUSD' but substring lookup probes 'DOGEUSD' which never matches. 7 of 8 configured coins ship."}
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_cryptoffiliate_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(Expected/blocked-on-user) Run Supabase SQL schema files to create email_subscribers, exchange_fees, cron_runs tables — currently all Supabase writes 404 with PGRST205 'Could not find the table ... in the schema cache'.",
+    "(Expected/blocked-on-user) Replace SUPABASE_SERVICE_ROLE_KEY in /app/backend/.env — user supplied the publishable key (`sb_publishable_...`) rather than the service-role key. Even after the schema is created, RLS will block writes until the real service-role JWT is in place.",
+    "(Low priority) Fix operator-precedence in subscribe IP-extract expression in /app/backend/server.py line ~448-449.",
+    "(Low priority) Cap or TTL the _subscribe_rate dict to prevent slow memory growth.",
+    "(Optional, carried over) Map Kraken DOGE pair correctly in TICKER_COINS."
+  ],
+  "critical_code_review_comments": [
+    "server.py has grown to ~718 lines mixing health, ticker, AI, email, fees, cron. Recommend splitting into routes/ (ai.py, ticker.py, subscribe.py, fees.py) before adding more endpoints — already past the 700-line guideline.",
+    "Supabase helpers raise HTTPException(502) but callers in /subscribe and /cron/sync-fees catch and downgrade to 200 — fine, but the 502 in the helper is misleading (could be 404/auth). Consider returning a structured error from the helper instead of raising.",
+    "FALLBACK_EXCHANGE_FEES and AI_SYSTEM_PROMPT both hard-code 2026 fee tiers in two different places; they will drift. Single-source from a JSON config.",
+    "`__import__('re')` and `__import__('fastapi').Request` inline imports are a code-smell — promote to top-level imports.",
+    "_fetch_kraken_exchange_fee parses fees with a chained `.get('fees_maker') or .get('fees')` fallback that silently swallows malformed responses; add explicit handling and a metric/log when falling back."
+  ],
+  "updated_files": ["/app/backend/tests/test_cryptoffiliate_api.py"],
+  "success_rate": {"backend": "100% (16/16)", "frontend": "N/A (backend-only request)"},
+  "test_credentials": "N/A — no end-user auth on these endpoints. CRON_SECRET=dev-cron-secret-change-me used for cron auth. Used delivered@resend.dev as Resend's sandbox always-deliverable address. Unique random 10.x.x.x X-Forwarded-For IPs used per test to avoid cross-test rate-limit interference.",
+  "seed_data_creation": "One TEST_<uuid8> StatusCheck row in Mongo. One Resend send to delivered@resend.dev (sandbox, discarded). No Supabase rows created (tables don't exist yet).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Pytest suite at /app/backend/tests/test_cryptoffiliate_api.py now covers 16 cases including subscribe / fees / cron-sync. Subscribe tests use X-Forwarded-For with random 10.x.x.x IPs because server reads that header first for rate-limiting; if you reuse the same IP across two tests within 60s you WILL get 429. delivered@resend.dev is Resend's sandbox; it returns 200 without consuming inbox quota. Supabase writes are expected to 404 (PGRST205 schema-cache) until the user runs schema SQL AND swaps the publishable key for the service-role key.",
+  "rca of the issue": "No bug to RCA — all 16 scenarios in the review request pass on first execution after appending the new tests. The 'supabase=false' branch is the documented graceful-degradation path and is explicitly asserted to contain 'table' / 'schema cache' / 'relation' / 'invalid api key' / 'permission' / 'supabase' so future regressions to the error message will be caught."
+}

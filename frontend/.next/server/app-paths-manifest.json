@@ -1,1 +1,5 @@
-{}
+{
+  "/tools/fee-calculator/page": "app/tools/fee-calculator/page.js",
+  "/tax-software/page": "app/tax-software/page.js",
+  "/hardware-wallets/page": "app/hardware-wallets/page.js"
+}
