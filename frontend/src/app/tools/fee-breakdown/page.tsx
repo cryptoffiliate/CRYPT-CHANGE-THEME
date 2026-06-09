@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function FeeBreakdownPage() {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="brutalist-page min-h-screen bg-slate-50">
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-4 py-10">
           <p className="section-label mb-2">Free tool · Updated June 2025</p>

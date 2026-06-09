@@ -1,8 +1,10 @@
 {
-  "/tools/fee-calculator/page": "app/tools/fee-calculator/page.js",
   "/tax-software/page": "app/tax-software/page.js",
   "/hardware-wallets/page": "app/hardware-wallets/page.js",
-  "/security/page": "app/security/page.js",
   "/cloud-mining/page": "app/cloud-mining/page.js",
-  "/trading-bots/page": "app/trading-bots/page.js"
+  "/page": "app/page.js",
+  "/quiz/page": "app/quiz/page.js",
+  "/scam-detector/page": "app/scam-detector/page.js",
+  "/tools/dca-planner/page": "app/tools/dca-planner/page.js",
+  "/compare/page": "app/compare/page.js"
 }

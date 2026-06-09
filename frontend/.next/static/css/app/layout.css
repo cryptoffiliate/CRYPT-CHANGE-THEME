@@ -2809,8 +2809,25 @@ input:focus, textarea:focus, select:focus {
   --bp-danger:   #D50000;
 
   background-color: var(--bp-paper) !important;
+  background-image: none !important;
   color: var(--bp-ink) !important;
   font-family: var(--font-body), 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+/* Override the inline background:var(--ink) pattern used on most inner pages
+   by re-defining --ink (and friends) inside .brutalist-page only. This makes
+   any `background: var(--ink)` resolve to bone-paper, `color: var(--paper)`
+   resolve to ink, etc., across all scoped children. */
+.brutalist-page {
+  --ink:      #F4F4F0;  /* paper, was #05060A */
+  --ink-2:    #FFFFFF;  /* white, was #0B0E18 */
+  --ink-3:    #F4F4F0;  /* paper, was #131726 */
+  --paper:    #111111;  /* ink, was #E8ECFF */
+  --chrome:   #4A4A4A;  /* muted ink */
+  --wire:     #111111;
+  --wire-soft:#2A2A2A;
+  --gold:     #FF5722;  /* vermilion, was cyan-neon */
+  --gold-dim: rgba(255, 87, 34, 0.10);
 }
 
 /* Base text */

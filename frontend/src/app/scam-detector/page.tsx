@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ScamDetectorPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div style={{ borderBottom: "1px solid var(--wire)", padding: "48px 0 32px" }}>
         <div className="container">
           <div className="eyebrow">Powered by Claude · Free to use</div>

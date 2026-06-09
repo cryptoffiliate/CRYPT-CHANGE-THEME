@@ -57,7 +57,7 @@ const STATUS_CONFIG = {
 
 export default function ProofOfReservesPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div style={{ borderBottom: "1px solid var(--wire)", padding: "48px 0 32px" }}>
         <div className="container">
           <div className="eyebrow">Post-FTX accountability · Updated quarterly</div>

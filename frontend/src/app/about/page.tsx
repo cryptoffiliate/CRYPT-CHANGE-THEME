@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div className="container-sm" style={{ paddingTop: "60px", paddingBottom: "80px" }}>
         <div className="eyebrow" style={{ marginBottom: "16px" }}>About us</div>
         <h1 className="heading-xl" style={{ marginBottom: "20px" }}>

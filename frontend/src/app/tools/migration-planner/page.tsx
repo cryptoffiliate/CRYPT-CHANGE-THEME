@@ -117,7 +117,7 @@ Include 5-7 practical steps covering: account setup on target, KYC verification 
   const toEx = EXCHANGES.find((e) => e.id === to);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div style={{ borderBottom: "1px solid var(--wire)", padding: "48px 0 32px" }}>
         <div className="container">
           <div className="eyebrow">AI-powered · World first</div>

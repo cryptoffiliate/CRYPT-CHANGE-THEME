@@ -44,7 +44,7 @@ export default function FeeTrendsPage() {
   const toY = (v: number) => pad.t + innerH - ((v - minV) / (maxV - minV)) * innerH;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div style={{ borderBottom: "1px solid var(--wire)", padding: "48px 0 32px" }}>
         <div className="container">
           <div className="eyebrow">Historical data · Built from nightly cron</div>

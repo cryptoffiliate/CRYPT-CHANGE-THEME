@@ -70,7 +70,7 @@ Be direct and critical. Don't hedge. If it looks like a scam, say so.`;
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div style={{ borderBottom: "1px solid var(--wire)", padding: "48px 0 32px" }}>
         <div className="container">
           <div className="eyebrow">AI-powered · World first · Free</div>

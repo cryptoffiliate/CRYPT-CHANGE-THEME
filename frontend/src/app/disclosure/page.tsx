@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function DisclosurePage() {
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div className="container-sm" style={{ paddingTop: "60px", paddingBottom: "80px" }}>
         <div className="eyebrow" style={{ marginBottom: "16px" }}>Legal</div>
         <h1 className="heading-lg" style={{ marginBottom: "32px" }}>Affiliate disclosure</h1>

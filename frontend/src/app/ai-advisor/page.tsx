@@ -18,7 +18,7 @@ const AI_FEATURES = [
 
 export default function AIAdvisorPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
 
       {/* Hero */}
       <div style={{ borderBottom: "1px solid var(--wire)", padding: "64px 0 48px" }}>

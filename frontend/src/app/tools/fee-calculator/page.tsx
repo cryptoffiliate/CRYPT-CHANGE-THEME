@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function FeeCalculatorPage() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
+    <div className="brutalist-page max-w-3xl mx-auto px-4 py-10">
       <p className="section-label">Free tool</p>
       <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">
         Crypto exchange fee calculator

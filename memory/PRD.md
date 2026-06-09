@@ -22,6 +22,12 @@ Make the platform's lead capture + nightly fee sync actually functional end-to-e
 
 ## What's Been Implemented
 
+### Iteration 6 — Brutalist cascade extended to all 24 remaining inner pages (2026-06-09)
+- Applied `brutalist-page` className to the root wrapper of every remaining inner page: `/about`, `/disclosure`, `/privacy`, `/quiz`, `/alerts`, `/bonuses`, `/proof-of-reserves`, `/regulatory-monitor`, `/security-audit`, `/status`, `/tax-harvesting`, `/volume`, `/whitepaper`, `/scam-detector`, `/ai-advisor`, and all 9 `/tools/*` pages.
+- Most pages use `<div style={{ minHeight: "100vh", background: "var(--ink)" }}>` as the root, so I also **re-defined the `--ink / --paper / --gold / --chrome / --wire` CSS variables inside `.brutalist-page`** so inline `background: var(--ink)`, `color: var(--paper)`, `background: var(--gold)` declarations automatically flip to the brutalist palette without touching the per-page JSX. This means dozens of internal inline styles immediately become brutalist.
+- Net effect: 29 of 30+ inner pages now render in editorial brutalist style (only the homepage `/`, `/compare`, and `/reviews` remain on the dark cyberpunk theme — those were intentionally designed for the dark hero look).
+- All 24 pages return HTTP 200; backend test suite still 16/16 passing.
+
 ### Iteration 5 — Brutalist page cascade + in-process cron (2026-06-09)
 **Frontend**
 - **`.brutalist-page` CSS scope** added to `globals.css` (~200 lines) — re-flips the legacy dark-theme adaptations back to the editorial-brutalist light palette inside any element that opts in. Maps `bg-slate-50` → bone-paper, `bg-white` → surface, `text-slate-900` → ink, `.card` → bordered+offset-shadow, `.section-label` → vermilion bullet eyebrow, `.btn-outline` → brutalist outline button, inputs → 2 px ink border + zero radius, rounded-* utilities → 0. Includes inline-style re-flips for `#FFFFFF / #F4F4F0 / #111111 / 2px solid #111111` so React inline styles render correctly inside the scope.
@@ -79,7 +85,7 @@ Make the platform's lead capture + nightly fee sync actually functional end-to-e
 
 ### P0 (next session)
 - **Run the 3 Supabase SQL files + swap the publishable key for the real service-role JWT** (see "Action Items For User" above). Until these are done, all Supabase writes 404 with `PGRST205` and the nightly cron's persistence step is a no-op.
-- **Apply `brutalist-page` to the remaining inner pages** that still render dark: `/about`, `/disclosure`, `/privacy`, `/quiz`, `/alerts`, `/bonuses`, `/proof-of-reserves`, `/regulatory-monitor`, `/security-audit`, `/status`, `/tax-harvesting`, `/volume`, `/whitepaper`, `/scam-detector`, `/ai-advisor`, and all `/tools/*` (8 tool pages). Same one-line change as the 5 P0 pages.
+- Decide on the homepage/`/compare`/`/reviews` treatment — those 3 pages were intentionally designed for the dark cyberpunk hero. Either keep the dual-aesthetic (dark hero + brutalist everything else) or cascade them too for full consistency.
 
 ### P1
 - Split `server.py` (~770 lines) into `routes/{ai,ticker,subscribe,fees,scheduler}.py`.
@@ -91,6 +97,7 @@ Make the platform's lead capture + nightly fee sync actually functional end-to-e
 - Per-session rate-limit on `/api/ai-advisor` to protect the EMERGENT_LLM_KEY budget.
 - `Last updated · N hours ago` freshness badge on every comparison table (reading `exchange_fees.fetched_at`).
 - Animated number counters on hero stats.
+- Track affiliate clicks in Supabase + nightly digest email of top-converting links.
 
 ## Notes
 - Bybit/Binance APIs are geo-blocked from the Emergent container IP (HTTP 403/451) — the cron job uses published standard tier as the fallback for those exchanges. Switch the cron to run from a server with unrestricted egress (e.g. a Vercel/Cloudflare cron) to get live values for all 5 exchanges.

@@ -4,7 +4,7 @@ export const metadata: Metadata = { title: "Privacy Policy — Cryptoffiliate" }
 
 export default function PrivacyPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div className="container-sm" style={{ paddingTop: "60px", paddingBottom: "80px" }}>
         <div className="eyebrow" style={{ marginBottom: "16px" }}>Legal</div>
         <h1 className="heading-lg" style={{ marginBottom: "32px" }}>Privacy policy</h1>

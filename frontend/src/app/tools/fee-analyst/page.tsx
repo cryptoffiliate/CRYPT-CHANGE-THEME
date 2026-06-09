@@ -117,7 +117,7 @@ Be direct and specific with numbers. Max 5 sentences.`;
   rows.forEach((r) => { byExchange[r.exchange] = (byExchange[r.exchange] ?? 0) + (parseFloat(r.fee) || 0); });
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div style={{ borderBottom: "1px solid var(--wire)", padding: "48px 0 32px" }}>
         <div className="container">
           <div className="eyebrow">AI-native · World first</div>

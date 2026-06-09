@@ -68,7 +68,7 @@ Format your response clearly with the 5 areas and a final recommendation. Be dir
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ink)" }}>
+    <div className="brutalist-page" style={{ minHeight: "100vh", background: "var(--ink)" }}>
       <div style={{ borderBottom: "1px solid var(--wire)", padding: "48px 0 32px" }}>
         <div className="container">
           <div className="eyebrow">AI-powered · Holistic assessment</div>
