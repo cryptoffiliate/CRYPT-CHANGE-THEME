@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function ReviewsPage() {
   return (
-    <div style={{ background: "#F4F4F0" }} data-testid="reviews-listing">
+    <div className="brutalist-page" style={{ background: "#F4F4F0" }} data-testid="reviews-listing">
       <div className="container" style={{ paddingTop: "56px", paddingBottom: "80px", maxWidth: "1024px" }}>
         {/* Editorial masthead */}
         <div

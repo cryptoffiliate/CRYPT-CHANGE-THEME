@@ -2795,6 +2795,16 @@ input:focus, textarea:focus, select:focus {
    brutalist look to specific inner pages without breaking the dark
    cyberpunk homepage / hero sections.
    ═══════════════════════════════════════════════════════════════════════ */
+
+/* When any brutalist-page exists on the page, flip the body background
+   to paper so the wrapper doesn't sit as an island on the dark default. */
+body:has(.brutalist-page) {
+  background: #F4F4F0 !important;
+}
+html:has(.brutalist-page) {
+  background: #F4F4F0 !important;
+}
+
 .brutalist-page {
   --bp-paper:    #F4F4F0;
   --bp-surface:  #FFFFFF;
@@ -3086,6 +3096,175 @@ input:focus, textarea:focus, select:focus {
 .brutalist-page .btn-brutalist-primary:hover {
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0 0 var(--bp-ink);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   NEON SUPPRESSION — kill the cyberpunk glow effects on hero pages
+   (homepage uses heavy inline textShadow/boxShadow/blur — strip them
+   inside brutalist-page so the editorial look stays clean)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Kill all radial-gradient glow overlays (the homepage hero halos) */
+.brutalist-page [style*='radial-gradient'][aria-hidden],
+.brutalist-page [style*='radial-gradient'][style*='blur'][aria-hidden] {
+  display: none !important;
+}
+
+/* Strip text-shadow / box-shadow neon glows. We re-introduce brutalist
+   offset shadows on cards and CTAs via class selectors above. */
+.brutalist-page [style*='textShadow'],
+.brutalist-page [style*='text-shadow'] {
+  text-shadow: none !important;
+}
+
+/* Kill any boxShadow that starts with "0 0" (glow) — keep offset shadows */
+.brutalist-page [style*='boxShadow: "0 0'],
+.brutalist-page [style*='box-shadow: 0 0'],
+.brutalist-page [style*='boxShadow:"0 0'] {
+  box-shadow: none !important;
+}
+
+/* Remap common neon hex colors used in homepage inline styles to the
+   brutalist palette. The attribute substring selector catches both
+   `color: #00F0FF` and `background: #00F0FF` etc. */
+.brutalist-page [style*='#00F0FF'][style*='color'] { color: #002FA7 !important; }
+.brutalist-page [style*='#C4FF00'][style*='color'] { color: #111111 !important; }
+.brutalist-page [style*='#B026FF'][style*='color'] { color: #002FA7 !important; }
+.brutalist-page [style*='#00FF94'][style*='color'] { color: #00C853 !important; }
+.brutalist-page [style*='#FF8A3D'][style*='color'] { color: #FF5722 !important; }
+.brutalist-page [style*='#FF3D71'][style*='color'] { color: #D50000 !important; }
+.brutalist-page [style*='#FFC93C'][style*='color'] { color: #111111 !important; }
+
+/* Background neon swatches → solid brutalist blocks */
+.brutalist-page [style*='background: #00F0FF'],
+.brutalist-page [style*='background:#00F0FF'] { background: #002FA7 !important; color: #F4F4F0 !important; }
+.brutalist-page [style*='background: #C4FF00'],
+.brutalist-page [style*='background:#C4FF00'] { background: #FFD600 !important; color: #111111 !important; }
+.brutalist-page [style*='background: #B026FF'],
+.brutalist-page [style*='background:#B026FF'] { background: #002FA7 !important; color: #F4F4F0 !important; }
+.brutalist-page [style*='background: #00FF94'],
+.brutalist-page [style*='background:#00FF94'] { background: #00C853 !important; color: #111111 !important; }
+.brutalist-page [style*='background: #FF8A3D'],
+.brutalist-page [style*='background:#FF8A3D'] { background: #FF5722 !important; color: #111111 !important; }
+.brutalist-page [style*='background: #FF3D71'],
+.brutalist-page [style*='background:#FF3D71'] { background: #D50000 !important; color: #FFFFFF !important; }
+.brutalist-page [style*='background: rgba(11, 14, 24'],
+.brutalist-page [style*='background:rgba(11, 14, 24'] { background: #FFFFFF !important; }
+.brutalist-page [style*='background: rgba(5, 6, 10'],
+.brutalist-page [style*='background:rgba(5, 6, 10'] { background: #111111 !important; }
+.brutalist-page [style*='background:rgba(0, 0, 0, 0.4)'],
+.brutalist-page [style*='background: rgba(0, 0, 0, 0.4)'],
+.brutalist-page [style*='background:rgba(0, 0, 0, 0.5)'],
+.brutalist-page [style*='background: rgba(0, 0, 0, 0.5)'] { background: #111111 !important; }
+.brutalist-page [style*='background:rgba(0, 0, 0, 0.3)'],
+.brutalist-page [style*='background: rgba(0, 0, 0, 0.3)'] { background: #F4F4F0 !important; }
+.brutalist-page [style*='background:linear-gradient(180deg, rgba(11, 14, 24'],
+.brutalist-page [style*='background: linear-gradient(180deg, rgba(11, 14, 24'],
+.brutalist-page [style*='background:linear-gradient(180deg, rgba(19, 23, 38'],
+.brutalist-page [style*='background: linear-gradient(180deg, rgba(19, 23, 38'] { background: #FFFFFF !important; }
+
+/* Strip backdrop-blur (frosted glass) — anti-brutalist */
+.brutalist-page [style*='backdropFilter'],
+.brutalist-page [style*='backdrop-filter'] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Cards on home/compare with rounded glass surfaces → brutalist tiles */
+.brutalist-page .glow-card {
+  background: #FFFFFF !important;
+  border: 2px solid #111111 !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 0 #111111 !important;
+  color: #111111 !important;
+}
+.brutalist-page a.glow-card:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 6px 6px 0 0 #111111 !important;
+}
+
+/* heading-xl/lg/md inside brutalist-page → ink black */
+.brutalist-page .heading-xl,
+.brutalist-page .heading-lg,
+.brutalist-page .heading-md,
+.brutalist-page .heading-sm { color: #111111 !important; text-shadow: none !important; }
+
+/* italic-serif accent gets a Klein-blue tint (brutalist-friendly highlight) */
+.brutalist-page .italic-serif { color: #002FA7 !important; }
+
+/* Homepage hero "Skip the sales pitch" pill — light-on-light glow → solid canary */
+.brutalist-page h1 span[style*='#C4FF00'],
+.brutalist-page h1 span[style*='C4FF00'] {
+  background: #FFD600 !important;
+  color: #111111 !important;
+  border: 2px solid #111111 !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 0 #111111 !important;
+  text-shadow: none !important;
+}
+
+/* btn-primary / btn-ghost / btn-klein → brutalist treatment */
+.brutalist-page .btn-primary {
+  background: #FF5722 !important;
+  color: #111111 !important;
+  border: 2px solid #111111 !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 0 #111111 !important;
+  font-family: var(--font-display);
+  font-weight: 800 !important;
+  font-size: 13px !important;
+  letter-spacing: .06em !important;
+  text-transform: uppercase !important;
+  padding: 10px 20px !important;
+  text-shadow: none !important;
+}
+.brutalist-page .btn-primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 #111111 !important;
+}
+.brutalist-page .btn-ghost {
+  background: #FFFFFF !important;
+  color: #111111 !important;
+  border: 2px solid #111111 !important;
+  border-radius: 0 !important;
+  font-family: var(--font-display);
+  font-weight: 800 !important;
+  font-size: 13px !important;
+  letter-spacing: .06em !important;
+  text-transform: uppercase !important;
+  padding: 10px 20px !important;
+  text-shadow: none !important;
+}
+.brutalist-page .btn-ghost:hover {
+  background: #F4F4F0 !important;
+}
+.brutalist-page .btn-klein {
+  background: #002FA7 !important;
+  color: #F4F4F0 !important;
+  border: 2px solid #111111 !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 0 #111111 !important;
+  font-family: var(--font-display);
+  font-weight: 800 !important;
+  text-shadow: none !important;
+}
+
+/* Pulse dot (live indicator) → solid mint square */
+.brutalist-page .pulse-dot {
+  background: #00C853 !important;
+  border-radius: 0 !important;
+  width: 8px !important;
+  height: 8px !important;
+  border: 1px solid #111111 !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+/* `stripe` divider component */
+.brutalist-page .stripe {
+  background: repeating-linear-gradient(-45deg, #111111 0 8px, #FFD600 8px 16px) !important;
+  height: 8px !important;
+  border: none !important;
 }
 .file\:border-0::file-selector-button{
   border-width: 0px;

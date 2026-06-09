@@ -37,7 +37,7 @@ const VERTICALS = [
 
 export default function HomePage() {
   return (
-    <div data-testid="home-page">
+    <div data-testid="home-page" className="brutalist-page">
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section

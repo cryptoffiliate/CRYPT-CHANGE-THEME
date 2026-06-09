@@ -109,7 +109,7 @@ export default function ReviewPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <div style={{ background: "#F4F4F0" }} data-testid={`review-page-${exchange.slug}`}>
+      <div className="brutalist-page" style={{ background: "#F4F4F0" }} data-testid={`review-page-${exchange.slug}`}>
         <div className="container" style={{ paddingTop: "48px", paddingBottom: "80px", maxWidth: "880px" }}>
 
           {/* Breadcrumb */}

@@ -22,6 +22,15 @@ Make the platform's lead capture + nightly fee sync actually functional end-to-e
 
 ## What's Been Implemented
 
+### Iteration 7 — Final brutalist cascade: home / compare / reviews (2026-06-09)
+- Applied `brutalist-page` to the three remaining dark cyberpunk pages: `/`, `/compare`, `/reviews`, `/reviews/[slug]`.
+- Added **neon-suppression CSS** inside `.brutalist-page` scope: kills inline radial-gradient halos, strips text-shadow neon glows, remaps the 7 hero neon hex colors (`#00F0FF`, `#C4FF00`, `#B026FF`, `#00FF94`, `#FF8A3D`, `#FF3D71`, `#FFC93C`) to brutalist palette equivalents (klein-blue, canary, mint, vermilion, danger), turns `.glow-card` into a brutalist offset-shadow tile, flattens `.btn-primary / .btn-ghost / .btn-klein` to brutalist treatments.
+- Replaced the cyberpunk `.stripe` divider with a yellow/black diagonal-stripe ribbon.
+- Surgically remapped the inline `rgba(11, 14, 24)` / `rgba(5, 6, 10)` / `linear-gradient(180deg, rgba(...))` patterns used in `HomeExchangeTable` so it flips from a dark glass tile to a white brutalist tile.
+- Added `body:has(.brutalist-page) { background: #F4F4F0 }` so the page-level background flips to paper when any brutalist island is on the page — eliminates the "brutalist card sitting on dark canvas" inconsistency on `/compare`.
+- **The AI Chat terminal stays dark** by design — it reads as an "embedded data terminal" inside the brutalist hero, exactly as the original design guidelines specified.
+- All endpoints + pages verified HTTP 200; no backend regressions.
+
 ### Iteration 6 — Brutalist cascade extended to all 24 remaining inner pages (2026-06-09)
 - Applied `brutalist-page` className to the root wrapper of every remaining inner page: `/about`, `/disclosure`, `/privacy`, `/quiz`, `/alerts`, `/bonuses`, `/proof-of-reserves`, `/regulatory-monitor`, `/security-audit`, `/status`, `/tax-harvesting`, `/volume`, `/whitepaper`, `/scam-detector`, `/ai-advisor`, and all 9 `/tools/*` pages.
 - Most pages use `<div style={{ minHeight: "100vh", background: "var(--ink)" }}>` as the root, so I also **re-defined the `--ink / --paper / --gold / --chrome / --wire` CSS variables inside `.brutalist-page`** so inline `background: var(--ink)`, `color: var(--paper)`, `background: var(--gold)` declarations automatically flip to the brutalist palette without touching the per-page JSX. This means dozens of internal inline styles immediately become brutalist.
@@ -85,13 +94,13 @@ Make the platform's lead capture + nightly fee sync actually functional end-to-e
 
 ### P0 (next session)
 - **Run the 3 Supabase SQL files + swap the publishable key for the real service-role JWT** (see "Action Items For User" above). Until these are done, all Supabase writes 404 with `PGRST205` and the nightly cron's persistence step is a no-op.
-- Decide on the homepage/`/compare`/`/reviews` treatment — those 3 pages were intentionally designed for the dark cyberpunk hero. Either keep the dual-aesthetic (dark hero + brutalist everything else) or cascade them too for full consistency.
 
 ### P1
 - Split `server.py` (~770 lines) into `routes/{ai,ticker,subscribe,fees,scheduler}.py`.
 - Move hard-coded fee fallbacks + AI system prompt to a single `data/fees.json` config.
 - Mobile responsive pass on `/compare`, `/reviews`, `/hardware-wallets`, `/tax-software`.
 - Multi-turn AI chat memory persisted in Mongo (currently rebuilds context per request).
+- Audit any inline neon-color usage outside the homepage that may now look off on paper (e.g. a few rarely-visited routes — spot-check `/security-audit`, `/proof-of-reserves`, `/regulatory-monitor`).
 
 ### P2
 - Per-session rate-limit on `/api/ai-advisor` to protect the EMERGENT_LLM_KEY budget.

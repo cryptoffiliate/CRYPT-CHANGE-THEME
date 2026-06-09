@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function ComparePage() {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="brutalist-page max-w-6xl mx-auto px-4 py-10">
       <ExchangeComparisonTable exchanges={EXCHANGES} />
     </div>
   );
